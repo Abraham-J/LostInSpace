@@ -33,7 +33,7 @@ Turns:
     2)Interact with space.
     *3)If interacted with enemy already
             a)enemy will move randomly (only over debris)
-            b)If enemy is pursuing you(you are within one block) then you lose 2 morale every turn. 50:50 chance that enemy will move towards you.
+            b)If enemy is pursuing you(you are within one block) then you lose 2 morale every turn. 50:50 chance that enemy wil		     l move towards you.
             c)If enemy is near friendly planet, then will destroy it for you. 
     
         
