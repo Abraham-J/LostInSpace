@@ -9,6 +9,9 @@
 
 using std::string;
 
+Space::Space(){
+    
+}
 void Space::setArray(int m_row, int m_col){
     row = m_row;
     col = m_col;

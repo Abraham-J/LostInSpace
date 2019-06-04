@@ -5,7 +5,9 @@
 ********************************/
 
 #include "Game.hpp"
-
+#include "Space.hpp"
+#include "Fog.hpp"
+#include "Debris.hpp"
 #include <string>
 #include <iostream>
 
@@ -30,8 +32,23 @@ void Game::Initialize(){
     cout << "Before we start, let me get some information about the game board you'll be playing on..." << endl;
     cout << "Tell me the number of rows you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     row = Game::intValidation(3,10);
+    playerRow = rand()%(row-2)+3;
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
+    playerCol = rand()%(col-2)+3;
+
+    
+    space1 = new Space**[row];
+    for (int i=0; i<row; i++)
+        space1[i] = new Space*[col];
+    
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            space1[i][j]= new Fog;
+        }
+    }
+    space1[playerRow][playerCol] = new Debris;
+
 }
 /**************************
  *This member function sets the pace of the game and give background information to the player
@@ -43,17 +60,48 @@ void Game::Intro(){
  *This member function finds out which function the user wants to use, or if they want to quit.
  **************************/
 int Game::MainMenu(){
-    int playerChoice;
-    
-    cout << "1. Buffer Test" << endl;
-    cout << "2. Create Palindromes" << endl;
-    cout << "3. Quit" << endl;
-    
-    playerChoice = Game::intValidation(1,3);
-    return playerChoice;
+    Game::showBoard();
+    cout << endl;
+    Game::movePlayer();
+    Game::doAction();
+    cout << endl << "1. Move Up" << endl;
+    cout << "2. Move Right" << endl;
+    cout << "3. Move Down" << endl;
+    cout << "4. Move Left" << endl;
+    cout << "5. Show Key" << endl;
+    return 1;
 }
 
+/**************************
+ *Prints out the game board to the user
+ **************************/
+void Game::showBoard(){
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            if(i == playerRow && j == playerCol){
+                cout << " 1 ";
+            }
+            else{
+                cout << space1[i][j]->getCharacter();
 
+            }
+        }
+        cout  << endl;
+    }
+}
+/**************************
+ *Prints out list directions player can move, validates that that's a viable move. And moves player on board. Doing so will reveal what the new space is.
+ **************************/
+void Game::movePlayer(){
+    
+}
+/**************************
+ Prints out list of actions available at current place on board, and performs
+ said action
+ **************************/
+void Game::doAction(){
+    
+}
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/

@@ -5,6 +5,8 @@
  ********************************/
 #include <iostream>
 #include <string>
+#include <time.h>
+#include <stdlib.h>
 #include "Space.hpp"
 #include "Fog.hpp"
 #include "Debris.hpp"
@@ -16,6 +18,7 @@ using std::endl;
 using std::string;
 
 int main(){
+    srand(time(NULL));
     Game game;
     Space space;
     int row;

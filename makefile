@@ -8,6 +8,7 @@ SRC = main.cpp
 SRC += Game.cpp
 SRC += Space.cpp
 SRC += Debris.cpp
+SRC += Fog.cpp
 
 OBJ = $(SRC:.c=.o)
 

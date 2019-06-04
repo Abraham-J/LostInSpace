@@ -7,7 +7,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include <string>
-
+#include "Space.hpp"
 
 
 
@@ -17,6 +17,9 @@ class Game{
     
     int row;
     int col;
+    int playerRow;
+    int playerCol;
+    Space *** space1;
 
   public:
     
@@ -28,6 +31,12 @@ class Game{
     void Intro();
     
     int MainMenu();
+    
+    void movePlayer();
+    
+    void doAction();
+    
+    void showBoard();
     
     void divider();
 

@@ -30,6 +30,7 @@ protected://Variables available to all the derived classes
     
     
 public://Constructors, destructors and methods
+    Space();
     void setArray(int, int);
     std::string getType();
     std::string getCharacter();
