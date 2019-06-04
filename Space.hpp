@@ -14,27 +14,28 @@ protected://Variables available to all the derived classes
     
     std::string type;
     std::string character;
-    std::string **strArray;
+    Space ***spaceArray;
     
-    struct SpaceNode{
-        Space * up;
-        Space * down;
-        Space * left;
-        Space * right;
-    };
+    Space * up;
+    Space * down;
+    Space * left;
+    Space * right;
     
-    SpaceNode * head;
     
     int row;
     int col;
     
     
 public://Constructors, destructors and methods
+//    Space * head;
     Space();
-    void setArray(int, int);
+    void setMap(Space *, Space *, Space *, Space *);
     std::string getType();
     std::string getCharacter();
-    
+    Space * getUp();
+    Space * getDown();
+    Space * getLeft();
+    Space * getRight();
     virtual void DoActivity(int);
     
     

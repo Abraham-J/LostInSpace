@@ -26,7 +26,11 @@ int main(){
     
     game.Initialize();
     game.Intro();
-    game.MainMenu();
+    bool endOfGame = false;
+    while(!endOfGame){
+        game.MainMenu();
+
+    }
     
 
     return 0;

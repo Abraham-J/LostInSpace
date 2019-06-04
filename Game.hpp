@@ -34,11 +34,17 @@ class Game{
     
     void movePlayer();
     
+    bool tryMove(int);
+    
+    void setBoard();
+    
     void doAction();
     
     void showBoard();
     
-    void divider();
+    void showKey();
+    
+    void divider(int);
 
     bool isInteger(std::string);
     

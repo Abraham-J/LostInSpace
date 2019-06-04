@@ -32,11 +32,12 @@ void Game::Initialize(){
     cout << "Before we start, let me get some information about the game board you'll be playing on..." << endl;
     cout << "Tell me the number of rows you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     row = Game::intValidation(3,10);
-    playerRow = rand()%(row-2)+3;
+    playerRow = rand()%(row);
+    cout << playerRow << endl;
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
-    playerCol = rand()%(col-2)+3;
-
+    playerCol = rand()%(col);
+    cout << playerCol << endl;
     
     space1 = new Space**[row];
     for (int i=0; i<row; i++)
@@ -48,7 +49,7 @@ void Game::Initialize(){
         }
     }
     space1[playerRow][playerCol] = new Debris;
-
+    Game::setBoard();
 }
 /**************************
  *This member function sets the pace of the game and give background information to the player
@@ -63,12 +64,10 @@ int Game::MainMenu(){
     Game::showBoard();
     cout << endl;
     Game::movePlayer();
+    Game::setBoard();
+
     Game::doAction();
-    cout << endl << "1. Move Up" << endl;
-    cout << "2. Move Right" << endl;
-    cout << "3. Move Down" << endl;
-    cout << "4. Move Left" << endl;
-    cout << "5. Show Key" << endl;
+
     return 1;
 }
 
@@ -93,7 +92,145 @@ void Game::showBoard(){
  *Prints out list directions player can move, validates that that's a viable move. And moves player on board. Doing so will reveal what the new space is.
  **************************/
 void Game::movePlayer(){
+    bool badChoice = false;
+    while (badChoice == false){
+        cout << "1. Move Up" << endl;
+        cout << "2. Move Right" << endl;
+        cout << "3. Move Down" << endl;
+        cout << "4. Move Left" << endl;
+        cout << "5. Don't move" << endl;
+        cout << "6. Show Key" << endl;
+        int choice = Game::intValidation(1,6);
+        if (choice == 6){
+            Game::showKey();
+        }
+        else{
+            badChoice = Game::tryMove(choice);
+        }
+    }
+
+}
+
+bool Game::tryMove(int choice){
+    if (choice == 1){
+        if (space1[playerRow][playerCol]->getUp() == nullptr){
+            cout << "Nope son" << endl;
+        }
+        else{
+            space1[playerRow-1][playerCol] = new Debris;
+            playerRow--;
+            return true;
+        }
+    }
+    if(choice ==2){
+        if (space1[playerRow][playerCol]->getRight() == nullptr){
+            cout << "Nope son" << endl;
+        }
+        else{
+            space1[playerRow][playerCol+1] = new Debris;
+            playerCol++;
+            return true;
+        }
+    }
+    if(choice ==3){
+        if (space1[playerRow][playerCol]->getDown() == nullptr){
+            cout << "Nope son" << endl;
+        }
+        else{
+            space1[playerRow+1][playerCol] = new Debris;
+            playerRow++;
+            return true;
+        }
+    }
+    if(choice ==4){
+        if (space1[playerRow][playerCol]->getLeft() == nullptr){
+            cout << "Nope son" << endl;
+            
+        }
+        else{
+            space1[playerRow][playerCol-1] = new Debris;
+            playerCol--;
+            return true;
+        }
+    }
+    if(choice == 5){
+        return true;
+    }
+    return false;
+}
+
+/**************************
+This memeber function checks if the user's choice is a valid move, if it is. it will move the player.
+ **************************/
+void Game::setBoard(){
     
+    for(int i=0; i <row; i++){
+        for(int j=0; j<col; j++){
+            if(i == 0 && j == 0){
+                space1[i][j]->setMap(nullptr, space1[i+1][j], nullptr, space1[i][j+1]);
+//                head->up = nullptr;
+//                head->left = nullptr;
+//                head->right = space1[i][j+1];
+//                head->down = space1[i+1][j];
+            }
+            else if (i == 0 && (j != 0 && j !=col-1)){
+                space1[i][j]->setMap(nullptr, space1[i+1][j], space1[i][j-1], space1[i][j+1]);
+//                head->up = nullptr;
+//                head->left = space1[i][j-1];
+//                head->right = space1[i][j+1];
+//                head->down = space1[i+1][j];
+            }
+            else if (i == 0 && j == col-1){
+                space1[i][j]->setMap(nullptr, space1[i+1][j], space1[i][j-1], nullptr);
+//                head->up = nullptr;
+//                head->left = space1[i][j-1];
+//                head->right = nullptr;
+//                head->down = space1[i+1][j];
+            }
+            else if ((i !=0 && i != row-1) && j == 0){
+                space1[i][j]->setMap(space1[i-1][j], space1[i+1][j], nullptr, space1[i][j+1]);
+//                head->up = space1[i-1][j];
+//                head->left = nullptr;
+//                head->right = space1[i][j+1];
+//                head->down = space1[i+1][j];
+            }
+            else if (i == row -1 && j ==0){
+               space1[i][j]->setMap(space1[i-1][j], nullptr, nullptr, space1[i][j+1]);
+//                head->up = space1[i-1][j];
+//                head->left = nullptr;
+//                head->right = space1[i][j+1];
+//                head->down = nullptr;
+            }
+            else if (i ==row -1 &&(j !=0 && j != col-1)){
+               space1[i][j]->setMap(space1[i-1][j], nullptr, space1[i][j-1], space1[i][j+1]);
+//                head->up = space1[i-1][j];
+//                head->left = space1[i][j-1];
+//                head->right = space1[i][j+1];
+//                head->down = nullptr;
+            }
+            else if (i == row-1 && j == col-1){
+                space1[i][j]->setMap(space1[i-1][j], nullptr, space1[i][j-1], nullptr);
+//                head->up = space1[i-1][j];
+//                head->left = space1[i][j-1];
+//                head->right = nullptr;
+//                head->down = nullptr;
+            }
+            else if ((i!= 0 && i!= row-1) && j == col-1){
+                space1[i][j]->setMap(space1[i-1][j], space1[i+1][j], space1[i][j-1], nullptr);
+//                head->up = space1[i-1][j];
+//                head->left = space1[i][j-1];
+//                head->right = nullptr;
+//                head->down = space1[i+1][j];
+            }
+            else{
+                space1[i][j]->setMap(space1[i-1][j], space1[i+1][j], space1[i][j-1], space1[i][j+1]);
+//                head->up = space1[i-1][j];
+//                head->left = space1[i][j-1];
+//                head->right = space1[i][j+1];
+//                head->down = space1[i+1][j];
+            }
+        }
+    }
 }
 /**************************
  Prints out list of actions available at current place on board, and performs
@@ -102,11 +239,23 @@ void Game::movePlayer(){
 void Game::doAction(){
     
 }
+
+void Game::showKey(){
+    Game::divider(30);
+    cout << "!\t   Key \t !"<< endl;
+    cout << "!\t * FOG \t !" << endl;
+    cout << "!\t 1 Player \t !" << endl;
+    cout << "!\t O Planet \t !" << endl;
+    cout << "!\t S Space Station \t !" << endl;
+    cout << "!\t : Nebula \t !" << endl;
+    cout << "!\t  Debris \t !" << endl;
+    Game::divider(30);
+}
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/
-void Game::divider(){
-	for(int j =0; j< 60; j++){
+void Game::divider(int amount){
+	for(int j =0; j< amount; j++){
 		cout <<"-";
 	}
 	cout << endl;	
