@@ -1,21 +1,20 @@
 /********************************
  *Name: Sanjo Abraham
  *Date: 05/31/19
- *Description: Header file of Planet class, a derived class of Space.
+ *Description: Header file of Hide class, a derived class of Activities.
  ********************************/
 
-#ifndef PLANET_HPP
-#define PLANET_HPP
-#include "Space.hpp"
+#ifndef HIDE_HPP
+#define HIDE_HPP
+#include "Activities.hpp"
 #include <string>
 
-class Planet : public Space{
+class Hide : public Activities{
     
 private://Variables
     
     
 public://Constructors, destructors and methods
-    Planet();
-    void DoActivity(int) override;
+    
 };
 #endif

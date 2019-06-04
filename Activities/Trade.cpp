@@ -1,20 +1,12 @@
 /********************************
  *Name: Sanjo Abraham
  *Date: 05/31/19
- *Description: Implementation file of Planet class.
+ *Description: Implementation file of Trade class.
  ********************************/
 
-#include "Planet.hpp"
+#include "Trade.hpp"
 #include <iostream>
 
 using std::cout;
 using std::endl;
 using std::string;
-
-Planet::Planet(){
-    type = "Planet";
-    character = " O ";
-}
-void Planet::DoActivity(int choice){
-    
-}

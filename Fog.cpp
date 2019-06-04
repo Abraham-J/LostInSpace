@@ -1,21 +1,18 @@
 /********************************
  *Name: Sanjo Abraham
  *Date: 05/31/19
- *Description: Implementation file of Nebula class.
+ *Description: Implementation file of Fog class.
  ********************************/
 
-#include "Nebula.hpp"
+#include "Fog.hpp"
 #include <iostream>
 
 using std::cout;
 using std::endl;
 using std::string;
 
-Nebula::Nebula(){
-    type = "Nebula";
-    character = " : ";
-    
+Fog::Fog(){
+    type = "Fog";
+    character = "XXX";
 }
-void Nebula::DoActivity(int choice){
-    
-}
+
