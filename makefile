@@ -10,6 +10,8 @@ SRC += Space.cpp
 SRC += Debris.cpp
 SRC += Fog.cpp
 
+SRC += slowRead.cpp
+
 OBJ = $(SRC:.c=.o)
 
 output: $(OBJ) 

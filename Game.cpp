@@ -8,8 +8,10 @@
 #include "Space.hpp"
 #include "Fog.hpp"
 #include "Debris.hpp"
+#include "slowRead.hpp"
 #include <string>
 #include <iostream>
+
 
 
 using std::cin;
@@ -19,8 +21,9 @@ using std::string;
 
 
 
-Game::Game(){
 
+Game::Game(){
+    rounds = 1;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
 
@@ -33,11 +36,9 @@ void Game::Initialize(){
     cout << "Tell me the number of rows you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     row = Game::intValidation(3,10);
     playerRow = rand()%(row);
-    cout << playerRow << endl;
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
     playerCol = rand()%(col);
-    cout << playerCol << endl;
     
     space1 = new Space**[row];
     for (int i=0; i<row; i++)
@@ -55,19 +56,24 @@ void Game::Initialize(){
  *This member function sets the pace of the game and give background information to the player
  **************************/
 void Game::Intro(){
-    
+    SlowRead reader;
+    string setting = "...Where are we? \n This part of space doesn't seem familiar... \n";
+    reader.readSlow(setting, 30);
+
 }
 /**************************
  *This member function finds out which function the user wants to use, or if they want to quit.
  **************************/
 int Game::MainMenu(){
+    Game::divider(60);
+    cout << "Round " << rounds << endl;
     Game::showBoard();
     cout << endl;
     Game::movePlayer();
     Game::setBoard();
-
     Game::doAction();
-
+    rounds++;
+    
     return 1;
 }
 
@@ -110,7 +116,9 @@ void Game::movePlayer(){
     }
 
 }
-
+/**************************
+ *Validates that the move is possible (doesn't go off board) and will  move player
+ **************************/
 bool Game::tryMove(int choice){
     if (choice == 1){
         if (space1[playerRow][playerCol]->getUp() == nullptr){
@@ -239,18 +247,21 @@ void Game::setBoard(){
 void Game::doAction(){
     
 }
-
+/**************************
+ Prints out what each part of the map means
+ **************************/
 void Game::showKey(){
-    Game::divider(30);
-    cout << "!\t   Key \t !"<< endl;
-    cout << "!\t * FOG \t !" << endl;
-    cout << "!\t 1 Player \t !" << endl;
-    cout << "!\t O Planet \t !" << endl;
-    cout << "!\t S Space Station \t !" << endl;
-    cout << "!\t : Nebula \t !" << endl;
-    cout << "!\t  Debris \t !" << endl;
-    Game::divider(30);
+    Game::divider(32);
+    cout << "!\t   Key \t\t\t !"<< endl;
+    cout << "!\t 'X' FOG \t\t !" << endl;
+    cout << "!\t '1' Player \t\t !" << endl;
+    cout << "!\t 'O' Planet \t\t !" << endl;
+    cout << "!\t 'S' Space Station \t !" << endl;
+    cout << "!\t ':' Nebula \t\t !" << endl;
+    cout << "!\t ' ' Debris \t\t !" << endl;
+    Game::divider(32);
 }
+
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/

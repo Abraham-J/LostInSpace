@@ -19,6 +19,8 @@ class Game{
     int col;
     int playerRow;
     int playerCol;
+    int rounds;
+    std::string captainName;
     Space *** space1;
 
   public:
@@ -45,7 +47,7 @@ class Game{
     void showKey();
     
     void divider(int);
-
+    
     bool isInteger(std::string);
     
 //    bool isPositive(int);
