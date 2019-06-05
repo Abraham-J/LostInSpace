@@ -23,6 +23,12 @@ class Game{
     std::string captainName;
     Space *** space1;
 
+    std::string playerName;
+    int playerShields;
+    int playerAttack;
+    int playerMorale;
+    int playerDefense;
+    
   public:
     
     Game();

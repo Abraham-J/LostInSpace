@@ -11,6 +11,9 @@
 #include "slowRead.hpp"
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <chrono> // std::chrono::microseconds
+#include <thread> // std::this_thread::sleep_for;
 
 
 
@@ -18,18 +21,26 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::string;
+using std::ostringstream;
 
 
 
 
 Game::Game(){
     rounds = 1;
+    playerShields = 30;
+    playerAttack = 5;
+    playerMorale = 100;
+    playerDefense = 3;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
-
+    for (int i=0; i<row; i++)
+        delete [] space1[i];
+    delete [] space1;
 }
 /**************************
- *This member function gets the rows and columns of the game board from the user
+ *This member function gets the rows and columns of the game board from the user. After getting this information,
+ it randomly places the player on the board, and will set the board up.
  **************************/
 void Game::Initialize(){
     cout << "Before we start, let me get some information about the game board you'll be playing on..." << endl;
@@ -39,6 +50,13 @@ void Game::Initialize(){
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
     playerCol = rand()%(col);
+    
+    cout << "Let's make the game a little personal, what's your name? ";
+    cin >> captainName;
+    cin.clear();
+    cin.ignore(999,'\n');
+    cout << "Okay, " << playerName << " let's get started." << endl;
+    Game::divider(60);
     
     space1 = new Space**[row];
     for (int i=0; i<row; i++)
@@ -56,10 +74,39 @@ void Game::Initialize(){
  *This member function sets the pace of the game and give background information to the player
  **************************/
 void Game::Intro(){
+    
     SlowRead reader;
-    string setting = "...Where are we? \n This part of space doesn't seem familiar... \n";
+    string setting = "(...Where are we?) \n(This part of space doesn't seem familiar...) \n";
     reader.readSlow(setting, 30);
-
+    
+    string setting2 = "Voice A: Captain! Are you alright sir? \n";
+    reader.readSlow(setting2,30);
+    
+    string setting3 = "Captain ";
+    setting3 += captainName;
+    setting3 += ": I'm fine Lieutenant. Do you have any idea what happened? \nLieutenant: Your guess is as good as mine. I've tried to scan the area, but it seems like several parts of our ship have taken damage. \n";
+    reader.readSlow(setting3, 30);
+    
+    string setting4 = "Captain ";
+    setting4 += captainName;
+    setting4 += ": How long before our computers can have a full report on the damage? \nLieutenant: Already underway. Should be available in just a minute.\n";
+    reader.readSlow(setting4, 30);
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+    
+    string setting5 = "Lieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n";
+    reader.readSlow(setting5, 30);
+    
+    string setting6 =  "Captain ";
+    setting6 += captainName;
+    setting6 += ": Well is anything working right now?\nLieutenant: Our thrusters and life support are the only fully functioning systems at the moment.\n";
+    reader.readSlow(setting6,30);
+    
+    string setting7 = "Captain ";
+    setting7 += captainName;
+    setting7 += ": Our options are limited, but let's make the best of what we can. Let's explore the area and see if we can scavage any missing parts\nLieutenant: Aye sir.\n";
+    reader.readSlow(setting7,30);
+    
 }
 /**************************
  *This member function finds out which function the user wants to use, or if they want to quit.

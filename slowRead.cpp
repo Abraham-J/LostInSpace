@@ -16,6 +16,10 @@ using std::flush;
 using std::this_thread::sleep_for;
 using std::chrono::milliseconds;
 
+/**********************
+ Member function that takes in a string to put out to the console. will read each character as fast as indicated by millis
+ Source: https://nodehead.com/c-how-to-console-typewriter-effect/
+ **********************/
 void SlowRead::readSlow(const string message, int millis){
     int x = 0;
     while(message[x] != '\0'){
