@@ -32,6 +32,8 @@ Game::Game(){
     playerAttack = 5;
     playerMorale = 100;
     playerDefense = 3;
+    carryCapacity =15;
+    currentItems = 0;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
     for (int i=0; i<row; i++)
@@ -323,6 +325,7 @@ void Game::showStats(){
     cout << "!\t Morale: " <<playerMorale << " \t\t !" << endl;
     cout << "!\t Attack: " << playerAttack << " \t\t !" << endl;
     cout << "!\t Defense: " << playerDefense << " \t\t !" << endl;
+    cout <<"!\t Inventory: " <<currentItems << "/" << carryCapacity << "\t !" << endl;
     Game::divider(32);
 }
 /**************************

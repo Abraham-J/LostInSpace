@@ -28,6 +28,8 @@ class Game{
     int playerAttack;
     int playerMorale;
     int playerDefense;
+    int carryCapacity;
+    int currentItems;
     
   public:
     
