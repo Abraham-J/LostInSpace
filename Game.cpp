@@ -79,34 +79,36 @@ void Game::Intro(){
     string setting = "(...Where are we?) \n(This part of space doesn't seem familiar...) \n";
     reader.readSlow(setting, 30);
     
-    string setting2 = "Voice A: Captain! Are you alright sir? \n";
+    string setting2 = "Voice A: Captain! Are you alright sir? \n\n";
     reader.readSlow(setting2,30);
     
     string setting3 = "Captain ";
     setting3 += captainName;
-    setting3 += ": I'm fine Lieutenant. Do you have any idea what happened? \nLieutenant: Your guess is as good as mine. I've tried to scan the area, but it seems like several parts of our ship have taken damage. \n";
+    setting3 += ": I'm fine Lieutenant. Do you have any idea what happened? \n\nLieutenant: Your guess is as good as mine. I've tried to scan the area, but it seems like several parts of our ship have taken damage. \n\n";
     reader.readSlow(setting3, 30);
     
     string setting4 = "Captain ";
     setting4 += captainName;
-    setting4 += ": How long before our computers can have a full report on the damage? \nLieutenant: Already underway. Should be available in just a minute.\n";
+    setting4 += ": How long before our computers can have a full report on the damage? \n\nLieutenant: Already underway. Should be available in just a minute.\n\n";
     reader.readSlow(setting4, 30);
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     
-    string setting5 = "Lieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n";
+    string setting5 = "Lieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n\n";
     reader.readSlow(setting5, 30);
     
     string setting6 =  "Captain ";
     setting6 += captainName;
-    setting6 += ": Well is anything working right now?\nLieutenant: Our thrusters and life support are the only fully functioning systems at the moment.\n";
+    setting6 += ": Well is anything working right now?\n\nLieutenant: Our thrusters and life support are the only fully functioning systems at the moment.\n\n";
     reader.readSlow(setting6,30);
     
     string setting7 = "Captain ";
     setting7 += captainName;
-    setting7 += ": Our options are limited, but let's make the best of what we can. Let's explore the area and see if we can scavage any missing parts\nLieutenant: Aye sir.\n";
+    setting7 += ": Our options are limited, but let's make the best of what we can. Let's explore the area and see if we can scavage any missing parts\n\nLieutenant: Aye sir.\n";
     reader.readSlow(setting7,30);
     
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
 }
 /**************************
  *This member function finds out which function the user wants to use, or if they want to quit.
@@ -119,6 +121,7 @@ int Game::MainMenu(){
     Game::movePlayer();
     Game::setBoard();
     Game::doAction();
+    Game::showStats();
     rounds++;
     
     return 1;
@@ -153,7 +156,11 @@ void Game::movePlayer(){
         cout << "4. Move Left" << endl;
         cout << "5. Don't move" << endl;
         cout << "6. Show Key" << endl;
-        int choice = Game::intValidation(1,6);
+        cout << "7. Show Stats" << endl;
+        int choice = Game::intValidation(1,7);
+        if (choice == 7){
+            Game::showStats();
+        }
         if (choice == 6){
             Game::showKey();
         }
@@ -305,10 +312,19 @@ void Game::showKey(){
     cout << "!\t 'O' Planet \t\t !" << endl;
     cout << "!\t 'S' Space Station \t !" << endl;
     cout << "!\t ':' Nebula \t\t !" << endl;
+    cout << "!\t 'E' Enemy \t\t !" << endl;
     cout << "!\t ' ' Debris \t\t !" << endl;
     Game::divider(32);
 }
-
+void Game::showStats(){
+    Game::divider(32);
+    cout << "!\t   Stats \t\t !"<< endl;
+    cout << "!\t Shields: "<< playerShields << " \t\t !" << endl;
+    cout << "!\t Morale: " <<playerMorale << " \t\t !" << endl;
+    cout << "!\t Attack: " << playerAttack << " \t\t !" << endl;
+    cout << "!\t Defense: " << playerDefense << " \t\t !" << endl;
+    Game::divider(32);
+}
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/

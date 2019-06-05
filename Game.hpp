@@ -52,6 +52,8 @@ class Game{
     
     void showKey();
     
+    void showStats();
+    
     void divider(int);
     
     bool isInteger(std::string);
