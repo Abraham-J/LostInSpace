@@ -9,11 +9,16 @@
 #include "Fog.hpp"
 #include "Debris.hpp"
 #include "slowRead.hpp"
+//#include "Item.hpp"
+#include "KeyItem.hpp"
+#include "RepairableItem.hpp"
+#include "NonRepairableItem.hpp"
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <chrono> // std::chrono::microseconds
 #include <thread> // std::this_thread::sleep_for;
+#include <vector>
 
 
 
@@ -22,9 +27,15 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::ostringstream;
+using std::vector;
 
 
-
+//struct Items{
+//    string name;
+//    string description;
+//    bool usable;
+//    int statBuff;
+//}
 
 Game::Game(){
     rounds = 1;
@@ -94,9 +105,10 @@ void Game::Intro(){
     setting4 += ": How long before our computers can have a full report on the damage? \n\nLieutenant: Already underway. Should be available in just a minute.\n\n";
     reader.readSlow(setting4, 30);
     
+    cout << "...";
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     
-    string setting5 = "Lieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n\n";
+    string setting5 = "\nLieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n\n";
     reader.readSlow(setting5, 30);
     
     string setting6 =  "Captain ";
@@ -117,13 +129,13 @@ void Game::Intro(){
  **************************/
 int Game::MainMenu(){
     Game::divider(60);
-    cout << "Round " << rounds << endl;
+    cout << endl << "Round " << rounds << endl << endl;
     Game::showBoard();
     cout << endl;
     Game::movePlayer();
     Game::setBoard();
     Game::doAction();
-    Game::showStats();
+    //Game::showStats();
     rounds++;
     
     return 1;
@@ -134,17 +146,30 @@ int Game::MainMenu(){
  **************************/
 void Game::showBoard(){
     for(int i=0; i<row; i++){
+
         for(int j=0; j<col; j++){
+            if(j==0 && i ==0 ){
+                Game::divider((col+1)*3);
+                cout << endl;
+            }
+            if(j==0){
+                cout <<"!";
+            }
             if(i == playerRow && j == playerCol){
                 cout << " 1 ";
+
             }
             else{
                 cout << space1[i][j]->getCharacter();
 
             }
+            if(j == col-1){
+                cout <<"!";
+            }
         }
         cout  << endl;
     }
+    Game::divider((col+1)*3);
 }
 /**************************
  *Prints out list directions player can move, validates that that's a viable move. And moves player on board. Doing so will reveal what the new space is.
@@ -159,7 +184,11 @@ void Game::movePlayer(){
         cout << "5. Don't move" << endl;
         cout << "6. Show Key" << endl;
         cout << "7. Show Stats" << endl;
-        int choice = Game::intValidation(1,7);
+        cout << "8. View Inventory" << endl;
+        int choice = Game::intValidation(1,8);
+        if (choice ==8){
+            Game::viewInventory();
+        }
         if (choice == 7){
             Game::showStats();
         }
@@ -308,6 +337,7 @@ void Game::doAction(){
  **************************/
 void Game::showKey(){
     Game::divider(32);
+    cout << endl;
     cout << "!\t   Key \t\t\t !"<< endl;
     cout << "!\t 'X' FOG \t\t !" << endl;
     cout << "!\t '1' Player \t\t !" << endl;
@@ -317,9 +347,11 @@ void Game::showKey(){
     cout << "!\t 'E' Enemy \t\t !" << endl;
     cout << "!\t ' ' Debris \t\t !" << endl;
     Game::divider(32);
+    cout << endl;
 }
 void Game::showStats(){
     Game::divider(32);
+    cout << endl;
     cout << "!\t   Stats \t\t !"<< endl;
     cout << "!\t Shields: "<< playerShields << " \t\t !" << endl;
     cout << "!\t Morale: " <<playerMorale << " \t\t !" << endl;
@@ -327,7 +359,49 @@ void Game::showStats(){
     cout << "!\t Defense: " << playerDefense << " \t\t !" << endl;
     cout <<"!\t Inventory: " <<currentItems << "/" << carryCapacity << "\t !" << endl;
     Game::divider(32);
+    cout << endl;
 }
+void Game::viewInventory(){
+    keyItemsLength = KeyItemList2.size() + KeyItemList.size();
+    for(int i = 1; i <= KeyItemList.size(); i++){
+        if(KeyItemList.size() != 0){
+            cout << i << ". " << KeyItemList.at(i-1)->getName() << " " << endl;
+        }
+    }
+    int j = 0;
+    for(int i = KeyItemList.size()+1; i <= keyItemsLength; i++){
+        cout << i << ". " << KeyItemList2.at(j)->getName() << " " << endl;
+        j++;
+    }
+}
+void Game::viewDescriptions(){
+    Game::viewInventory();
+    int choice;
+    cout << keyItemsLength+1 << ". Don't view descriptions." << endl;
+    Game::intValidation(1, keyItemsLength+1);
+    if (choice <= KeyItemList.size()){
+        cout << KeyItemList.at(choice-1)->getDescription() << endl;
+    }
+    if (choice == keyItemsLength+1){
+        
+    }
+    else{
+        cout << KeyItemList2.at(choice-KeyItemList.size()-1)->getDescription() << endl;
+    }
+}
+
+void Game::setItems(){
+//    RepairableItemList.resize(6);
+////    RepairableItemList.push_back(RepairableItem());
+//    RepairableItemList[0].keyItemstats.name = "Photon Torpedos";
+//    RepairableItemList[0].keyItemstats.description = "Weapon that allows firing of photons. Able to shoot nearly at the speed of light. Lightweight with a large round capacity.";
+//    RepairableItemList[0].repairCost = 100;
+//    RepairableItemList[0].statBoost(){
+//        playerAttack += 10;
+//    };
+}
+
+
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/
@@ -335,7 +409,6 @@ void Game::divider(int amount){
 	for(int j =0; j< amount; j++){
 		cout <<"-";
 	}
-	cout << endl;	
 }
 
 /**************************
@@ -472,7 +545,7 @@ float Game::floatValidation(float min, float max){
             isFloat = false;
         }
 
-        
+        //this is very specific for taking in a percentage, not just for floats
         if(((floatInput < min || floatInput > max) && (hasPercent == true || hasDecimal == true)) || ((floatInput < min || floatInput > max*100) && (hasPercent == false*100 && hasDecimal == false)) || isFloat == false){
             cout << "Please enter a number that is either between 1 and 99, as one of the following inputs: [" << min << ", " << max << "] or [" << min*100 << ", " << max*100 << "] or [" << min << "%, " << max << "%]" <<endl;
             cout<< ">>";

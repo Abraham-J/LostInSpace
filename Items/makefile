@@ -12,11 +12,10 @@ PROJ = FinalProject_Abraham_Sanjo
 #SRC += ./ItemFolder/Item.cpp
 #SRC += slowRead.cpp
 #SRC += Item.cpp
-SRC += $(wildcard *.cpp) $(wildcard */*.cpp)
+SRC += $(wildcard *.cpp) $(wildcard **/*.cpp)
 
 OBJ = $(SRC:.c=.o)
-#Subsystem:
-#	$(MAKE) -C Items
+
 output: $(OBJ) 
 	g++ $(SRC)   -std=c++11 -o output
 

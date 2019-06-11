@@ -7,8 +7,11 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include <string>
+#include <vector>
 #include "Space.hpp"
-
+#include "KeyItem.hpp"
+#include "Comm.hpp"
+#include "Warp.hpp"
 
 
 
@@ -28,8 +31,14 @@ class Game{
     int playerAttack;
     int playerMorale;
     int playerDefense;
+    
     int carryCapacity;
     int currentItems;
+    int keyItemsLength;
+    
+    std::vector<RepairableItem *> AllKeyItems;
+    std::vector<RepairableItem *> KeyItemList;
+    std::vector<NonRepairableItem *> KeyItemList2;
     
   public:
     
@@ -55,6 +64,12 @@ class Game{
     void showKey();
     
     void showStats();
+    
+    void viewInventory();
+    
+    void viewDescriptions();
+        
+    void setItems();
     
     void divider(int);
     

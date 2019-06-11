@@ -30,10 +30,9 @@ Items:
         Warp Drive.              Unable to repair.              This is the last thing you need to win the game. (5% chance)
     TYPE: Other (70% chance)
         Scrap Metal.            Can be for in debris(50% chance).                                   Sells for $40
-        Energy Conduit        Can be found in debris(10% chance).                              Sells for $350
-        Space Dust              Can find in debris(40% chance). Can Extract for $100.   Sells for $50. 
+        Space Rock              Can find in debris(40% chance). Can Extract for $100.   Sells for $50. 
             Gold                     Extracted from Dust. 40% chance.                                  Sells for $250. 
-            Rock                    Extracted from Dust. 60% chance.                                   Sells for $75. 
+            Dust                    Extracted from Dust. 60% chance.                                   Sells for $75. 
     TYPE: Usable
         Deflector Array.        Can be bought for $400. Increases Shields(+5 until max)
         Party-in-a-box.        Can be bought for $100. Increases Morale(+10 until max).
