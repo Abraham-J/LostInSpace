@@ -8,13 +8,19 @@
 #define GAME_HPP
 #include <string>
 #include <vector>
+
 #include "Space.hpp"
+
 #include "RepairableItem.hpp"
 #include "NonRepairableItem.hpp"
+
+#include "UsableItem.hpp"
+#include "RegularItem.hpp"
+#include "ExtractableItem.hpp"
+
 #include "RNG.hpp"
-//#include "KeyItem.hpp"
-//#include "Comm.hpp"
-//#include "Warp.hpp"
+#include "slowRead.hpp"
+
 
 
 
@@ -45,11 +51,32 @@ class Game{
     int stationCount;
     int spacesLeft;
     
-    std::vector<RepairableItem *> AllKeyItems;
+//    std::vector<RepairableItem *> AllKeyItems;//lists all the key items. will delete each one once found
     std::vector<RepairableItem *> KeyItemList;
     std::vector<NonRepairableItem *> KeyItemList2;
     
+    std::vector<UsableItem *> UsableItemList;//usable item inventory
+    std::vector<RegularItem *> RegularItemList;//sellable item inventory
+    std::vector<ExtractableItem *> ExtractableItemList; //extractable item inventory
+    
+    
     RNG generator;
+    
+    SlowRead reader;
+    
+    //key items are bools so that they are only used once
+    bool matterStabilized;
+    bool phasersArmed;
+    bool photonsReady;
+    bool radarActive;
+    bool commLineActive;
+    bool warpOnline;
+    bool shieldsRefined;
+    
+    bool firstPlanetFound;
+    
+    bool readTextSlow;
+    
   public:
     
     Game();
@@ -71,15 +98,29 @@ class Game{
     
     void doAction();
     
+    void staffDayOff();
+    
+    void talk();
+    
+    void tradeItem();
+    
+    void grabItem();
+    
+    void useItem();
+    
     void showBoard();
     
     void showKey();
     
     void showStats();
     
+    void viewKeyInventory();
+    
     void viewInventory();
     
     void viewDescriptions();
+    
+    void viewKeyDescriptions();
             
     void divider(int);
     

@@ -28,7 +28,7 @@ int main(){
     int col;
 
     game.Initialize();
-//    game.Intro(); //REMEMBER TO ADD THIS BACK AT THE END. TOOK OFF FOR TESTING PURPOSES
+    game.Intro(); //REMEMBER TO ADD THIS BACK AT THE END. TOOK OFF FOR TESTING PURPOSES
     bool endOfGame = false;
     while(!endOfGame){
         game.MainMenu();

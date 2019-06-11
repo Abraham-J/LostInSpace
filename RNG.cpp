@@ -17,3 +17,13 @@ int RNG::intGen(int min, int max)
 	return generator(engine);
 }
 
+/******************************************************************************
+ Passed:        float min, float max
+ Returns:    int
+ Description: This generates a random integer within the range passed into it.
+ ******************************************************************************/
+float RNG::floatGen(float min, float max)
+{
+    uniform_int_distribution<float> generator{ min, max };
+    return generator(engine);
+}
