@@ -229,14 +229,21 @@ void Game::movePlayer(){
         cout << "2. Move Right" << endl;
         cout << "3. Move Down" << endl;
         cout << "4. Move Left" << endl;
-        cout << "5. Don't move" << endl;
+        cout << "5. Don't Move" << endl;
         cout << "6. Show Key" << endl;
         cout << "7. Show Stats" << endl;
-        cout << "8. View Inventory" << endl;
-        cout << "9. Show Charter Territory" << endl;
-        int choice = Game::intValidation(1,9);
-        if (choice ==8){
-            Game::viewInventory();
+        cout << "8. View Found Ship Parts" << endl;
+        cout << "9. View Inventory" << endl;
+        cout << "10. Show Charter Territory" << endl;
+        int choice = Game::intValidation(1,10);
+        if (choice == 10){
+            Game::showBoard();
+        }
+        if (choice == 9){
+            Game::viewDescriptions();
+        }
+        if (choice == 8){
+            Game::viewKeyDescriptions();
         }
         if (choice == 7){
             Game::showStats();
@@ -244,9 +251,7 @@ void Game::movePlayer(){
         if (choice == 6){
             Game::showKey();
         }
-        if (choice == 9){
-            Game::showBoard();
-        }
+
         else{
             badChoice = Game::tryMove(choice);
         }
@@ -703,31 +708,64 @@ void Game::viewKeyInventory(){
  Prints out the other items that the player has gathered
  **************************/
 void Game::viewInventory(){
-    
+    currentItems = UsableItemList.size() + RegularItemList.size() + ExtractableItemList.size();
+    for(int i=1; i <= UsableItemList.size(); i++){
+        cout << i << ". " << UsableItemList.at(i)->getName() << endl;
+    }
+    int j = 0;
+    for(int i = UsableItemList.size()+1; i<= RegularItemList.size()+ UsableItemList.size(); i++){
+        cout << i << ". " << RegularItemList.at(j)->getName() << endl;
+        j++;
+    }
+    j = 0;
+    for (int i = (UsableItemList.size()+RegularItemList.size()+1); i <= currentItems; i++){
+        cout << i << ". " << ExtractableItemList.at(j)->getName() << endl;
+    }
 }
 /**************************
- Prints out key item descriptions
+ Prints out key item descriptions. Will keep prompting user to see if they want to view descrptions until they choose to go back
  **************************/
 void Game::viewKeyDescriptions(){
-    Game::viewKeyInventory();
-    int choice;
-    cout << keyItemsLength+1 << ". Go back." << endl;
-    Game::intValidation(1, keyItemsLength+1);
-    if (choice <= KeyItemList.size()){//get discription for repairable items that player has acquired
-        cout << KeyItemList.at(choice-1)->getDescription() << endl;
+    bool showDescription = true;
+    while (showDescription==true){
+        Game::viewKeyInventory();
+        cout << keyItemsLength+1 << ". Go back." << endl;
+        int choice = Game::intValidation(1, keyItemsLength+1);
+        if (choice <= KeyItemList.size()){//get discription for repairable items that player has acquired
+            cout << KeyItemList.at(choice-1)->getDescription() << endl;
+        }
+        if (choice == keyItemsLength+1){//go back
+            showDescription = false;
+        }
+        else{//get discription for non-repairable items that player has acquired
+            cout << KeyItemList2.at(choice-KeyItemList.size()-1)->getDescription() << endl;
+        }
     }
-    if (choice == keyItemsLength+1){ //get discription for non-repairable items that player has acquired
-        
-    }
-    else{
-        cout << KeyItemList2.at(choice-KeyItemList.size()-1)->getDescription() << endl;
-    }
+
 }
 /**************************
- Prints out key item descriptions
+ Prints out key item descriptions. Will keep prompting user to see if they want to view descrptions until they choose to go back
  **************************/
 void Game::viewDescriptions(){
-    
+    bool showDescription = true;
+    while (showDescription==true){
+        Game::viewInventory();
+        cout << currentItems+1 << ". Go back." << endl;
+        int choice = Game::intValidation(1, currentItems+1);
+        if (choice <= UsableItemList.size()){// show usable item description
+            cout << UsableItemList.at(choice-1)->getDescription() << endl;
+        }
+        if ((choice > UsableItemList.size()) && (choice <= UsableItemList.size()+RegularItemList.size())){//show regular item description
+            cout <<RegularItemList.at(choice-UsableItemList.size()-1)->getDescription() << endl;
+        }
+            if (choice == currentItems+1){//go back
+                showDescription = false;
+            }
+            else{//show extractable item description
+                cout << ExtractableItemList.at(choice-UsableItemList.size()-RegularItemList.size()-1)->getDescription() << endl;
+            }
+    }
+
 }
 
 /**************************
