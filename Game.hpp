@@ -66,12 +66,20 @@ class Game{
     
     //key items are bools so that they are only used once
     bool matterStabilized;
-    bool phasersArmed;
-    bool photonsReady;
+    bool phaserArmed;
+    bool photonReady;
     bool radarActive;
     bool commLineActive;
     bool warpOnline;
-    bool shieldsRefined;
+    bool shieldRefined;
+    
+    bool foundStabilizer;
+    bool foundPhaser;
+    bool foundPhoton;
+    bool foundRadar;
+    bool foundComm;
+    bool foundWarp;
+    bool foundShield;
     
     bool firstPlanetFound;
     

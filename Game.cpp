@@ -15,9 +15,27 @@
 
 //#include "slowRead.hpp"
 
-#include "KeyItem.hpp"
-#include "RepairableItem.hpp"
-#include "NonRepairableItem.hpp"
+//#include "KeyItem.hpp"
+//#include "RepairableItem.hpp"
+//#include "NonRepairableItem.hpp"
+#include "Photon.hpp"
+#include "Radar.hpp"
+#include "Phaser.hpp"
+#include "Stabilizer.hpp"
+#include "ShieldExtender.hpp"
+#include "Comm.hpp"
+
+#include "Warp.hpp"
+
+#include "Rock.hpp"
+
+#include "Scrap.hpp"
+#include "Iron.hpp"
+#include "Gold.hpp"
+
+#include "Party.hpp"
+#include "PowerOverloader.hpp"
+#include "Deflector.hpp"
 
 #include <string>
 #include <iostream>
@@ -49,12 +67,20 @@ Game::Game(){
     stationCount = 1;
     
     matterStabilized = false;
-    phasersArmed = false;
-    photonsReady = false;
+    phaserArmed = false;
+    photonReady = false;
     radarActive = false;
     commLineActive = false;
     warpOnline = false;
-    shieldsRefined = false;
+    shieldRefined = false;
+    
+    foundStabilizer = false;
+    foundPhaser = false;
+    foundPhoton = false;
+    foundRadar = false;
+    foundComm = false;
+    foundWarp = false;
+    foundShield = false;
     
     firstPlanetFound = false;
     
@@ -74,9 +100,11 @@ void Game::Initialize(){
     cout << "Before we start, let me get some information about the game board you'll be playing on..." << endl;
     cout << "Tell me the number of rows you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     row = Game::intValidation(3,10);
+    cout << endl;
     playerRow = rand()%(row);
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
+    cout << endl;
     playerCol = rand()%(col);
     
     debrisCount = (row*col)-planetCount-nebulaCount-stationCount-1; //set debris count as the remaining spots (subtract 1 because player will start on debris)
@@ -91,6 +119,7 @@ void Game::Initialize(){
     cout << "1. Yes, read faster." << endl;
     cout << "2. No, it's okay." << endl;
     int choice = Game::intValidation(1,2);
+    cout << endl;
     if(choice == 1){
         readTextSlow = false;
     }
@@ -236,6 +265,7 @@ void Game::movePlayer(){
         cout << "9. View Inventory" << endl;
         cout << "10. Show Charter Territory" << endl;
         int choice = Game::intValidation(1,10);
+        cout << endl;
         if (choice == 10){
             Game::showBoard();
         }
@@ -576,6 +606,7 @@ void Game::doAction(){
         cout << "2. Trade items" << endl;
         cout << "3. Relieve staff for the day" << endl;
         choice = Game::intValidation(1,3);
+        cout << endl;
         if (choice == 1){
             Game::talk();
         }
@@ -590,6 +621,7 @@ void Game::doAction(){
         cout << "1. Scavange the area for parts" << endl;
         cout << "2. Use item" <<endl;
         choice = Game::intValidation(1,2);
+        cout << endl;
         if (choice == 1){//scavange
             Game::grabItem();
         }
@@ -633,8 +665,9 @@ void Game::tradeItem(){
  Called by Game function to talk to colony when on a planet
  **************************/
 void Game::talk(){
-    int positiveOutcome;
-    positiveOutcome = generator.intGen(1,10);//1-4 is good, 5-9 is neutral, 10 is bad
+    int Outcome;
+    Outcome = generator.intGen(1,10);//1-4 is good, 5-9 is neutral, 10 is bad
+    
 }
 
 /**************************
@@ -642,12 +675,106 @@ void Game::talk(){
  **************************/
 void Game::grabItem(){
     int randNumb;
+    int randNumb2;
+    int randNumb3;
     randNumb = generator.intGen(1, 100);
     if (randNumb <= 80){//get a regular item
-        
+        randNumb2 = generator.intGen(1,100);
+        if(randNumb2 <= 70){//get an extractable item
+            if (currentItems < carryCapacity){
+                ExtractableItemList.push_back(new Rock);
+                currentItems++;
+                cout << "(Looks like we were able to find a space rock. Maybe we can refine it somewhere)" << endl;
+            }
+            else{
+                cout << "(We might not be able to carry that. Let's leave it where it is. Hopefully it'll be easy to find again.)" << endl;
+            }
+        }
+        else{//get a regular item
+            randNumb3 = generator.intGen(1,30);
+            if (randNumb3 <= 10){//add gold
+                if (currentItems < carryCapacity){
+                    RegularItemList.push_back(new Gold);
+                    currentItems++;
+                    cout << "(Wow, we found some gold out here. Not very useful for us at the moment, maybe we can sell it)" << endl;
+
+                }
+                else{
+                    cout << "(We might not be able to carry that. Let's leave it where it is. Hopefully it'll be easy to find again.)" << endl;
+                }
+            }
+            else if (randNumb3 > 10 && randNumb3 <= 20){//add iron
+                if (currentItems < carryCapacity){
+                    RegularItemList.push_back(new Iron);
+                    currentItems++;
+                    cout << "(Wow, we found some iron out here. Not very useful for us at the moment, maybe we can sell it)" << endl;
+
+                }
+                else{
+                    cout << "(We might not be able to carry that. Let's leave it where it is. Hopefully it'll be easy to find again.)" << endl;
+                }
+            }
+            else{//add scrap
+                if (currentItems < carryCapacity){
+                    RegularItemList.push_back(new Scrap);
+                    currentItems++;
+                    cout << "(Scrap. Not my favorite thing, but at least we can sell it.)" << endl;
+                }
+                else{
+                    cout << "(We might not be able to carry that safely. Let's leave it where it is. Hopefully it'll be easy to find again.)" << endl;
+                }
+            }
+        }
     }
     else { //get a key item
-        
+        randNumb2 = generator.intGen(1,100);
+        if (randNumb2 <= 90){
+            randNumb3 = generator.intGen(1,6);
+            if (randNumb3 == 1 && foundPhoton == false){
+                KeyItemList.push_back(new Photon);
+                cout << "(Our Photon Torpedos! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundPhoton = true;
+            }
+            else if (randNumb3 == 2 && foundPhaser == false){
+                KeyItemList.push_back(new Phaser);
+                 cout << "(Our Phaser Rifle Array! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundPhaser = true;
+            }
+            else if (randNumb3 == 3 && foundStabilizer == false){
+                KeyItemList.push_back(new Stabilizer);
+                 cout << "(Our Matter Stabilizer! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundStabilizer = true;
+            }
+            else if (randNumb3 == 4 && foundRadar == false){
+                KeyItemList.push_back(new Radar);
+                 cout << "(Our Multiangle Radar! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundRadar = true;
+            }
+            else if (randNumb3 == 5 && foundComm == false){
+                KeyItemList.push_back(new Comm);
+                 cout << "(Our Communication Device! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundComm = true;
+            }
+            else if (randNumb3 == 6 && foundShield == false){
+                KeyItemList.push_back(new ShieldExtender);
+                 cout << "(Our Shield Extender! Looks inoperable now. Let's try to find someplace to repair it.)" << endl;
+                foundShield = true;
+            }
+            else{
+                cout << "(Looks like we were unsuccessful finding anything. Maybe next time.)" << endl;
+            }
+        }
+        else{
+            int randNumb4 = generator.intGen(1,2);
+            if (randNumb4 == 1 && foundComm == true){
+                KeyItemList2.push_back(new Warp);
+                 cout << "(Our Warp Drive! This might be our ticket out of here. Looks inoperable now. I'm not sure if the planets around here have an engineering bay that can handle this. I hope HQ is able to reach us soon.)" << endl;
+                foundWarp = true;
+            }
+            else{
+                cout << "(Looks like we were unsuccessful finding anything. Maybe next time.)" << endl;
+            }
+        }
     }
 }
 /**************************
@@ -731,14 +858,18 @@ void Game::viewKeyDescriptions(){
         Game::viewKeyInventory();
         cout << keyItemsLength+1 << ". Go back." << endl;
         int choice = Game::intValidation(1, keyItemsLength+1);
+        cout << endl;
+        
         if (choice <= KeyItemList.size()){//get discription for repairable items that player has acquired
-            cout << KeyItemList.at(choice-1)->getDescription() << endl;
+            cout << "\t" << KeyItemList.at(choice-1)->getName() << ": " << KeyItemList.at(choice-1)->getDescription() << endl << endl;
         }
-        if (choice == keyItemsLength+1){//go back
+        else if (choice == keyItemsLength+1){//go back
             showDescription = false;
+            cout << endl;
         }
         else{//get discription for non-repairable items that player has acquired
-            cout << KeyItemList2.at(choice-KeyItemList.size()-1)->getDescription() << endl;
+            int j = choice-KeyItemList.size()-1;
+            cout << "\t" << KeyItemList2.at(j)->getName() << ": " << KeyItemList2.at(j)->getDescription() << endl << endl;
         }
     }
 
@@ -747,23 +878,28 @@ void Game::viewKeyDescriptions(){
  Prints out key item descriptions. Will keep prompting user to see if they want to view descrptions until they choose to go back
  **************************/
 void Game::viewDescriptions(){
+    int j;
     bool showDescription = true;
     while (showDescription==true){
         Game::viewInventory();
         cout << currentItems+1 << ". Go back." << endl;
         int choice = Game::intValidation(1, currentItems+1);
-        if (choice <= UsableItemList.size()){// show usable item description
-            cout << UsableItemList.at(choice-1)->getDescription() << endl;
+        cout << endl;
+        
+        if (choice <= UsableItemList.size()){// show usable item descriptions
+            cout <<"\t" << UsableItemList.at(choice-1)->getName() <<": " << UsableItemList.at(choice-1)->getDescription() << endl << endl;
         }
-        if ((choice > UsableItemList.size()) && (choice <= UsableItemList.size()+RegularItemList.size())){//show regular item description
-            cout <<RegularItemList.at(choice-UsableItemList.size()-1)->getDescription() << endl;
+        else if ((choice > UsableItemList.size()) && (choice <= UsableItemList.size()+RegularItemList.size())){//show regular item descriptions
+            j = choice-UsableItemList.size()-1;
+            cout << "\t" << RegularItemList.at(j)->getName() << ": " << RegularItemList.at(j)->getDescription() << endl<< endl;
         }
-            if (choice == currentItems+1){//go back
+        else if (choice == currentItems+1){//go back. only way to exit loop
                 showDescription = false;
-            }
-            else{//show extractable item description
-                cout << ExtractableItemList.at(choice-UsableItemList.size()-RegularItemList.size()-1)->getDescription() << endl;
-            }
+        }
+        else{//show extractable item descriptions
+            j = choice-UsableItemList.size()-RegularItemList.size()-1;
+            cout << "\t" << ExtractableItemList.at(j)->getName() << ": " << ExtractableItemList.at(j)->getDescription() << endl << endl;
+        }
     }
 
 }
