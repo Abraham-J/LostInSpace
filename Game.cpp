@@ -43,7 +43,7 @@ Game::Game(){
     playerAttack = 5;
     playerMorale = 100;
     playerDefense = 3;
-    carryCapacity =15;
+    carryCapacity = 15;
     currentItems = 0;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables

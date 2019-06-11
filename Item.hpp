@@ -10,14 +10,18 @@
 #include <vector>
 
 class Item{
-    private:
-            std::string name;
-            std::string description;
-            int baseCost;
-            int baseSellPrice;
+    protected:
+    std::string name;
+    std::string type;
+    std::string description;
+    int baseSellPrice;
 
     public:
-        Item();
+    Item();
+    std::string getName();
+    std::string getType();
+    std::string getDescription();
+    int getsellPrice();
 };
 
 #endif

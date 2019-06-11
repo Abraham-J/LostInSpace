@@ -9,7 +9,8 @@
 #include <string>
 #include <vector>
 #include "Space.hpp"
-#include "KeyItem.hpp"
+#include "RepairableItem.hpp"
+#include "NonRepairableItem.hpp"
 #include "Comm.hpp"
 #include "Warp.hpp"
 

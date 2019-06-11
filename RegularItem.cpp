@@ -4,6 +4,7 @@
 *Description: Implementation file of Regular Item
 ********************************/
 #include "RegularItem.hpp"
+
 RegularItem::RegularItem(){
     
 }

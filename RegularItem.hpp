@@ -1,7 +1,7 @@
 /********************************
  *Name: Sanjo Abraham
  *Date: 05/31/19
- *Description: Header file for RegularItem functions, RegularItem is an derived class
+ *Description: Header file for RegularItem functions, RegularItem is an derived class from Item
  ********************************/
 #include "Item.hpp"
 #ifndef REGULARITEM_HPP
@@ -10,7 +10,7 @@
 #include <vector>
 
 class RegularItem : public Item{
-    private:
+    protected:
     
     public: 
         RegularItem();
