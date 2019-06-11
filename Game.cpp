@@ -9,6 +9,9 @@
 #include "Fog.hpp"
 #include "Debris.hpp"
 #include "slowRead.hpp"
+#include "Nebula.hpp"
+#include "Station.hpp"
+#include "Planet.hpp"
 //#include "Item.hpp"
 #include "KeyItem.hpp"
 #include "RepairableItem.hpp"
@@ -21,7 +24,6 @@
 #include <vector>
 
 
-
 using std::cin;
 using std::cout;
 using std::endl;
@@ -30,21 +32,18 @@ using std::ostringstream;
 using std::vector;
 
 
-//struct Items{
-//    string name;
-//    string description;
-//    bool usable;
-//    int statBuff;
-//}
-
 Game::Game(){
     rounds = 1;
-    playerShields = 30;
+    playerShields = 40;
     playerAttack = 5;
-    playerMorale = 100;
+    playerMorale = 50;
     playerDefense = 3;
     carryCapacity = 15;
     currentItems = 0;
+    
+    planetCount = 3;
+    nebulaCount = 1;
+    stationCount = 1;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
     for (int i=0; i<row; i++)
@@ -63,6 +62,9 @@ void Game::Initialize(){
     cout << "Tell me the number of columns you'd like. Keep in mind, the larger the board, the longer the game." << endl;
     col = Game::intValidation(3,10);
     playerCol = rand()%(col);
+    
+    debrisCount = (row*col)-planetCount-nebulaCount-stationCount-1; //set debris count as the remaining spots (subtract 1 because player will start on debris)
+    spacesLeft = (debrisCount + planetCount + nebulaCount + stationCount);
     
     cout << "Let's make the game a little personal, what's your name? ";
     cin >> captainName;
@@ -106,6 +108,7 @@ void Game::Intro(){
     reader.readSlow(setting4, 30);
     
     cout << "...";
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     
     string setting5 = "\nLieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n\n";
@@ -185,7 +188,8 @@ void Game::movePlayer(){
         cout << "6. Show Key" << endl;
         cout << "7. Show Stats" << endl;
         cout << "8. View Inventory" << endl;
-        int choice = Game::intValidation(1,8);
+        cout << "9. Show Charter Territory" << endl;
+        int choice = Game::intValidation(1,9);
         if (choice ==8){
             Game::viewInventory();
         }
@@ -194,6 +198,9 @@ void Game::movePlayer(){
         }
         if (choice == 6){
             Game::showKey();
+        }
+        if (choice == 9){
+            Game::showBoard();
         }
         else{
             badChoice = Game::tryMove(choice);
@@ -205,43 +212,60 @@ void Game::movePlayer(){
  *Validates that the move is possible (doesn't go off board) and will  move player
  **************************/
 bool Game::tryMove(int choice){
+    int randNumb;
+    spacesLeft = (debrisCount + planetCount + nebulaCount + stationCount);
     if (choice == 1){
         if (space1[playerRow][playerCol]->getUp() == nullptr){
-            cout << "Nope son" << endl;
+            cout << "Odd, our thrusters seem to push us back to where we started." << endl;
         }
-        else{
-            space1[playerRow-1][playerCol] = new Debris;
+        else if(space1[playerRow-1][playerCol]->getType() == "Fog"){ //if that spot is Fog
+            randNumb = generator.intGen(1, spacesLeft);
+            Game::placeSpace(playerRow-1,playerCol, randNumb);
+            return true;
+        }
+        else{ // move to whatever it was before
             playerRow--;
             return true;
         }
     }
     if(choice ==2){
         if (space1[playerRow][playerCol]->getRight() == nullptr){
-            cout << "Nope son" << endl;
+            cout << "Odd, our thrusters seem to push us back to where we started." << endl;
+        }
+        else if(space1[playerRow][playerCol+1]->getType() == "Fog"){ //if that spot is Fog
+            randNumb = generator.intGen(1, spacesLeft);
+            Game::placeSpace(playerRow,playerCol+1, randNumb);
+            return true;
         }
         else{
-            space1[playerRow][playerCol+1] = new Debris;
             playerCol++;
             return true;
         }
     }
     if(choice ==3){
         if (space1[playerRow][playerCol]->getDown() == nullptr){
-            cout << "Nope son" << endl;
+            cout << "Odd, our thrusters seem to push us back to where we started." << endl;
+        }
+        else if(space1[playerRow+1][playerCol]->getType() == "Fog"){ //if that spot is Fog
+            randNumb = generator.intGen(1, spacesLeft);
+            Game::placeSpace(playerRow+1,playerCol, randNumb);
+            return true;
         }
         else{
-            space1[playerRow+1][playerCol] = new Debris;
             playerRow++;
             return true;
         }
     }
     if(choice ==4){
         if (space1[playerRow][playerCol]->getLeft() == nullptr){
-            cout << "Nope son" << endl;
-            
+            cout << "Odd, our thrusters seem to push us back to where we started." << endl;
+        }
+        else if(space1[playerRow][playerCol-1]->getType() == "Fog"){ //if that spot is Fog
+            randNumb = generator.intGen(1, spacesLeft);
+            Game::placeSpace(playerRow,playerCol-1, randNumb);
+            return true;
         }
         else{
-            space1[playerRow][playerCol-1] = new Debris;
             playerCol--;
             return true;
         }
@@ -251,7 +275,32 @@ bool Game::tryMove(int choice){
     }
     return false;
 }
-
+void Game::placeSpace(int pRow, int pCol, int randSpace){
+    if(randSpace <= stationCount && stationCount != 0){
+        space1[pRow][pCol] = new Station;
+        playerRow = pRow;
+        playerCol = pCol;
+        stationCount--;
+    }
+    else if ((randSpace <= (stationCount + nebulaCount)) && (randSpace > stationCount) && (nebulaCount != 0)){
+        space1[pRow][pCol] = new Nebula;
+        playerRow = pRow;
+        playerCol = pCol;
+        nebulaCount--;
+    }
+    else if ((randSpace <= (planetCount + stationCount + nebulaCount)) && (randSpace > stationCount + nebulaCount) && (planetCount!= 0) ){
+        space1[pRow][pCol] = new Planet;
+        playerRow = pRow;
+        playerCol = pCol;
+        planetCount--;
+    }
+    else{
+        space1[pRow][pCol] = new Debris;
+        playerRow = pRow;
+        playerCol = pCol;
+        debrisCount--;
+    }
+}
 /**************************
 This memeber function checks if the user's choice is a valid move, if it is. it will move the player.
  **************************/
@@ -388,17 +437,6 @@ void Game::viewDescriptions(){
     else{
         cout << KeyItemList2.at(choice-KeyItemList.size()-1)->getDescription() << endl;
     }
-}
-
-void Game::setItems(){
-//    RepairableItemList.resize(6);
-////    RepairableItemList.push_back(RepairableItem());
-//    RepairableItemList[0].keyItemstats.name = "Photon Torpedos";
-//    RepairableItemList[0].keyItemstats.description = "Weapon that allows firing of photons. Able to shoot nearly at the speed of light. Lightweight with a large round capacity.";
-//    RepairableItemList[0].repairCost = 100;
-//    RepairableItemList[0].statBoost(){
-//        playerAttack += 10;
-//    };
 }
 
 

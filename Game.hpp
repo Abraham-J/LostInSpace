@@ -11,8 +11,10 @@
 #include "Space.hpp"
 #include "RepairableItem.hpp"
 #include "NonRepairableItem.hpp"
-#include "Comm.hpp"
-#include "Warp.hpp"
+#include "RNG.hpp"
+//#include "KeyItem.hpp"
+//#include "Comm.hpp"
+//#include "Warp.hpp"
 
 
 
@@ -37,10 +39,17 @@ class Game{
     int currentItems;
     int keyItemsLength;
     
+    int debrisCount;
+    int planetCount;
+    int nebulaCount;
+    int stationCount;
+    int spacesLeft;
+    
     std::vector<RepairableItem *> AllKeyItems;
     std::vector<RepairableItem *> KeyItemList;
     std::vector<NonRepairableItem *> KeyItemList2;
     
+    RNG generator;
   public:
     
     Game();
@@ -56,6 +65,8 @@ class Game{
     
     bool tryMove(int);
     
+    void placeSpace(int, int, int);
+    
     void setBoard();
     
     void doAction();
@@ -69,9 +80,7 @@ class Game{
     void viewInventory();
     
     void viewDescriptions();
-        
-    void setItems();
-    
+            
     void divider(int);
     
     bool isInteger(std::string);

@@ -20,8 +20,6 @@ using std::endl;
 using std::string;
 using std::vector;
 int main(){
-
-    
     
     srand(time(NULL));
     Game game;
