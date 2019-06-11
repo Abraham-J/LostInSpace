@@ -85,7 +85,10 @@ Game::Game(){
     firstPlanetFound = false;
     
     readTextSlow = true;
-
+    
+    deathByShield = false;
+    deathByCrew = false;
+    winByWarp = false;
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
     for (int i=0; i<row; i++)
@@ -157,22 +160,6 @@ void Game::Intro(){
     setting4 += captainName;
     setting4 += ": How long before our computers can have a full report on the damage? \n\nLieutenant: Already underway. Should be available in just a minute.\n\n";
     
-    if (readTextSlow == true){
-        reader.readSlow(setting, 30);
-        reader.readSlow(setting2,30);
-        reader.readSlow(setting3, 30);
-        reader.readSlow(setting4, 30);
-    }
-    else{
-        cout << setting;
-        cout << setting2;
-        cout << setting3;
-        cout << setting4;
-    }
-    
-    cout << "..." << endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
     
     string setting5 = "\nLieutenant: The damage report is in. It seems like our main weapons array, warp drive, communication systems, and scanners are either malfunctioning or completely taken off the hull of the ship\n\n";
     
@@ -185,33 +172,61 @@ void Game::Intro(){
     setting7 += ": Our options are limited, but let's make the best of what we can. Let's explore the area and see if we can scavage any missing parts\n\nLieutenant: Aye sir.\n";
     
     if (readTextSlow == true){
+        reader.readSlow(setting, 30);
+        reader.readSlow(setting2,30);
+        reader.readSlow(setting3, 30);
+        reader.readSlow(setting4, 30);
+        
+        cout << "..." << endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        
         reader.readSlow(setting5, 30);
         reader.readSlow(setting6,30);
         reader.readSlow(setting7, 30);
+        
     }
     else{
-        cout << setting5;
-        cout << setting6;
-        cout << setting7;
+        cout << setting << setting2 << setting3 << setting4 << "..." << setting5 << setting6 << setting7;
     }
     
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));// wait so player can have a second to read
 
 }
 /**************************
  *This member function finds out which function the user wants to use, or if they want to quit.
  **************************/
-int Game::MainMenu(){
+bool Game::MainMenu(){
+    bool conclusion;
     Game::divider(60);
     cout << endl << "Round " << rounds << endl << endl;
     Game::showBoard();
     Game::movePlayer();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));// wait so player can have a second to read
+    
     Game::setBoard();
     Game::doAction();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));// wait so player can have a second to read
+    
     Game::showStats();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));// wait so player can have a second to read
+    
     rounds++;
     playerMorale--;
-    return 1;
+    
+    if(playerMorale <=0){ // end game criteria
+        Game::EndGame();
+        deathByCrew = true;
+        conclusion = true;
+    }
+    if(deathByShield == true){
+        Game::EndGame();
+        conclusion = true;
+    }
+    if(winByWarp == true){
+        Game::EndGame();
+        conclusion = true;
+    }
+    return conclusion;
 }
 
 /**************************
@@ -370,42 +385,34 @@ void Game::placeSpace(int pRow, int pCol, int randSpace){
         string newStation = "Lieutenant: Captain, is that a space station? Let's ask for permission to dock.\n\nCaptain ";
         newStation += playerName;
         newStation += ": Yes, hail them.\n\n";
-        
-        if (readTextSlow == true){
-            reader.readSlow(newStation, 10);
-        }
-        else{
-            cout << newStation;
-        }
 
-        cout << "..." << endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        
         if(firstPlanetFound == false){
             string newStation2 = "Station: Please identify yourself. We are unable to verify your origins.\n\n(We nust be further than we thought.)\n\nCaptain ";
             newStation2 += playerName;
             newStation2 += ": We are the lead exploratory star ship of the United Federation of Planets. We come from the Alpha sector. We apologize for the abrupt visit. Our ship was launched into this part of space, we believe that we may have either been attacked or warp travelled due to some malfunction. We are missing several parts of our ship, as you can see. We are clearly no threat to you. If you would allow, please let us dock and see if there are any supplies that would allow us to find our way out of here.\n\n";
 
-            
-            
             string newStation3 = "Station: Very well. We will inform the neighboring civilizations about your arrival to expedite your docking process. Please feel free to use our facilities. \n\nCpation ";
             newStation3 += playerName;
             newStation3 += ": We appreciate your hospitality. If there is anything that can be done, please let us know.\n\n";
             
             if (readTextSlow == true){
+                reader.readSlow(newStation, 10);
+                
+                cout << "..." << endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                
                 reader.readSlow(newStation2, 10);
                 reader.readSlow(newStation3,10);
             }
             else{
-                cout << newStation2;
-                cout << newStation3;
+                cout << newStation << "..." << newStation2 << newStation3;
             }
             
             firstPlanetFound = true;
             
         }
         
-        else{
+        else{//if we already me a civilization
             
             string newStation4 = "Station: You must be our visitor that we have been briefed about. We know of your situation. Please make yourselves at home. Docking bay 3 is available for your to dock in.\n\n";
 
@@ -459,24 +466,21 @@ void Game::placeSpace(int pRow, int pCol, int randSpace){
             newPlanet += ": Patch them through\n\nPlanet: State your purpose, your ship is unidentifiable to any civilizations within this sector.\n\n(How far have we travelled?)\n\nCaptain ";
             newPlanet += playerName;
             newPlanet += ": We are the lead exploratory star ship of the United Federation of Planets. We come from the Alpha sector. We apologize for the abrupt visit. Our ship was launched into this part of space, we believe that we may have either been attacked or warp travelled due to some malfunction. We are missing several parts of our ship, as you can see. We are clearly no threat to you. If you would allow, please let us dock and see if there are any supplies that would allow us to find our way out of here.\n\n";
-
-            if (readTextSlow == true){
-                reader.readSlow(newPlanet, 10);
-            }
-            else{
-                cout << newPlanet;
-            }
-            
-            cout << "..." << endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(750));
             
             string newPlanet2 = "Planet: We verified from a recent freighter ship that ship parts were found in the area, suggesting that your theory of what happened to you may be correct. Please forgive our suspicion. We aren't used to many guests. We will inform the neighboring civilizations about your arrival to expedite your docking process. In the meantime, feel free to dock and explore the un restricted areas of our planet.\n\n";
 
             if (readTextSlow == true){
+                reader.readSlow(newPlanet, 10);
+                
+                cout << "..." << endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(750));
+                
                 reader.readSlow(newPlanet2, 10);
+                
             }
             else{
-                cout << newPlanet2;
+                cout << newPlanet << "..." << newPlanet2;
+                
             }
             
             firstPlanetFound = true;
@@ -486,24 +490,19 @@ void Game::placeSpace(int pRow, int pCol, int randSpace){
             newPlanet3 += playerName;
             newPlanet3 += ": Patch them through.\n\n";
             
-            if (readTextSlow == true){
-                reader.readSlow(newPlanet3, 10);
-            }
-            else{
-                cout << newPlanet3;
-            }
-            
-            
-            cout << "..." << endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            
             string newPlanet4 = "Planet: You must be our visitor that we have been briefed about. We know of your situation. Please make yourselves at home. We have a small docking station for use, if you don't plan on staying long.\n\n";
             
             if (readTextSlow == true){
+                reader.readSlow(newPlanet3, 10);
+                
+                cout << "..." << endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                
                 reader.readSlow(newPlanet4, 10);
+                
             }
             else{
-                cout << newPlanet4;
+                cout << newPlanet3 << "..." << newPlanet4;
             }
         }
     }
@@ -628,7 +627,19 @@ void Game::doAction(){
         else{// use item
             Game::useItem();
         }
-
+        int buffeted = generator.intGen(1,5);
+        if (buffeted >=4){
+            playerShields -=2;
+            if(playerShields >= 5){
+                cout << "(We took a hit to our ships hull. Possibly from space junk. Someone should really clean that up. Our shields our holding)" << endl;
+            }
+            else if (playerShields < 5 && playerShields >= 1){
+                cout << "(Okay, we're getting real close to major system failures. Another hit from that space junk and I dont know if our ship will be able to handle it.)" << endl;
+            }
+            else{
+                deathByShield = true;
+            }
+        }
     }
     if(space1[playerRow][playerCol]->getType() == "Station"){
         
@@ -677,14 +688,14 @@ void Game::grabItem(){
     int randNumb;
     int randNumb2;
     int randNumb3;
-    randNumb = generator.intGen(1, 100);
-    if (randNumb <= 80){//get a regular item
-        randNumb2 = generator.intGen(1,100);
-        if(randNumb2 <= 70){//get an extractable item
+    randNumb = generator.intGen(1, 10);
+    if (randNumb <= 7){//get a regular item
+        randNumb2 = generator.intGen(1,10);
+        if(randNumb2 <= 7){//get an extractable item
             if (currentItems < carryCapacity){
                 ExtractableItemList.push_back(new Rock);
                 currentItems++;
-                cout << "(Looks like we were able to find a space rock. Maybe we can refine it somewhere)" << endl;
+                cout << "(Looks like we were able to find a space rock. Maybe we can refine it somewhere.)" << endl;
             }
             else{
                 cout << "(We might not be able to carry that. Let's leave it where it is. Hopefully it'll be easy to find again.)" << endl;
@@ -696,7 +707,7 @@ void Game::grabItem(){
                 if (currentItems < carryCapacity){
                     RegularItemList.push_back(new Gold);
                     currentItems++;
-                    cout << "(Wow, we found some gold out here. Not very useful for us at the moment, maybe we can sell it)" << endl;
+                    cout << "(Wow, we found some gold out here. Not very useful for us at the moment, maybe we can sell it.)" << endl;
 
                 }
                 else{
@@ -707,7 +718,7 @@ void Game::grabItem(){
                 if (currentItems < carryCapacity){
                     RegularItemList.push_back(new Iron);
                     currentItems++;
-                    cout << "(Wow, we found some iron out here. Not very useful for us at the moment, maybe we can sell it)" << endl;
+                    cout << "(Wow, we found some iron out here. Not very useful for us at the moment, maybe we can sell it.)" << endl;
 
                 }
                 else{
@@ -727,8 +738,8 @@ void Game::grabItem(){
         }
     }
     else { //get a key item
-        randNumb2 = generator.intGen(1,100);
-        if (randNumb2 <= 90){
+        randNumb2 = generator.intGen(1,10);
+        if (randNumb2 <= 8){
             randNumb3 = generator.intGen(1,6);
             if (randNumb3 == 1 && foundPhoton == false){
                 KeyItemList.push_back(new Photon);
@@ -765,8 +776,8 @@ void Game::grabItem(){
             }
         }
         else{
-            int randNumb4 = generator.intGen(1,2);
-            if (randNumb4 == 1 && foundComm == true){
+            int randNumb4 = generator.intGen(1,10);
+            if (randNumb4 >= 9 && foundComm == true){
                 KeyItemList2.push_back(new Warp);
                  cout << "(Our Warp Drive! This might be our ticket out of here. Looks inoperable now. I'm not sure if the planets around here have an engineering bay that can handle this. I hope HQ is able to reach us soon.)" << endl;
                 foundWarp = true;
@@ -903,7 +914,12 @@ void Game::viewDescriptions(){
     }
 
 }
-
+/**************************
+ *The function is a style choice to divide parts of the program with several dashes.
+ **************************/
+void Game::EndGame(){
+    
+}
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 
 **************************/

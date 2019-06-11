@@ -85,6 +85,9 @@ class Game{
     
     bool readTextSlow;
     
+    bool deathByShield;
+    bool deathByCrew;
+    bool winByWarp;
   public:
     
     Game();
@@ -94,7 +97,7 @@ class Game{
     
     void Intro();
     
-    int MainMenu();
+    bool MainMenu();
     
     void movePlayer();
     
@@ -129,6 +132,8 @@ class Game{
     void viewDescriptions();
     
     void viewKeyDescriptions();
+    
+    void EndGame();
             
     void divider(int);
     

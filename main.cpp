@@ -31,7 +31,7 @@ int main(){
     game.Intro(); //REMEMBER TO ADD THIS BACK AT THE END. TOOK OFF FOR TESTING PURPOSES
     bool endOfGame = false;
     while(!endOfGame){
-        game.MainMenu();
+        endOfGame = game.MainMenu();
 
     }
 
