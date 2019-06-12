@@ -14,11 +14,13 @@ class KeyItem{
     std::string name;
     std::string type;
     std::string description;
-    
+    std::string repairStatus;
     public:
     KeyItem();
     std::string getName();
     std::string getType();
+    std::string getRepairStatus();
+    void setRepairStatus(std::string);
     std::string getDescription();
 };
 

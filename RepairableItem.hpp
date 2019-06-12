@@ -12,6 +12,7 @@
 class RepairableItem: public KeyItem{
     protected:
         int repairCost;
+        std::string repaired;
     public:
     RepairableItem();
     int getRepairCost();

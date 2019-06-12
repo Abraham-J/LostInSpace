@@ -9,7 +9,7 @@
 using std::string;
 Warp::Warp(){
     name= "Warp Drive";
-    type= "NonRepairable";
+    type= "Warp";
+    repairStatus = "U";
     description= "Allows for the ship to operate at faster than the speed of light.";
-    preReqMet = false;
 }

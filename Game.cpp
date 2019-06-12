@@ -13,11 +13,6 @@
 #include "Station.hpp"
 #include "Planet.hpp"
 
-//#include "slowRead.hpp"
-
-//#include "KeyItem.hpp"
-//#include "RepairableItem.hpp"
-//#include "NonRepairableItem.hpp"
 #include "Photon.hpp"
 #include "Radar.hpp"
 #include "Phaser.hpp"
@@ -61,12 +56,12 @@ Game::Game(){
     playerDefense = 3;
     carryCapacity = 15;
     currentItems = 0;
-    goldBars = 10000;
+    goldBars = 100;
     
     planetCount = 3;
     nebulaCount = 1;
     stationCount = 1;
-    friendshipe  = 0;
+    friendship  = 0;
     matterStabilized = false;
     phaserArmed = false;
     photonReady = false;
@@ -100,12 +95,31 @@ Game::~Game(){//Free the allocated memory and reset the values of certain variab
     for (int i=0; i<row; i++)
         delete [] space1[i];
     delete [] space1;
-    KeyItemList.clear();
-    KeyItemList2.clear();
-    ShopList.clear();
-    UsableItemList.clear();
-    RegularItemList.clear();
-    ExtractableItemList.clear();
+    delete space1;
+    for (int i=0; i < KeyItemList.size(); i++){
+        delete KeyItemList.at(i);
+    }
+    for (int i=0; i < KeyItemList2.size(); i++){
+        delete KeyItemList2.at(i);
+    }
+    for (int i=0; i < ShopList.size(); i++){
+        delete ShopList.at(i);
+    }
+    for (int i=0; i < UsableItemList.size(); i++){
+        delete UsableItemList.at(i);
+    }
+    for (int i=0; i < RegularItemList.size(); i++){
+        delete RegularItemList.at(i);
+    }
+    for (int i=0; i < ExtractableItemList.size(); i++){
+        delete ExtractableItemList.at(i);
+    }
+//    KeyItemList.clear();
+//    KeyItemList2.clear();
+//    ShopList.clear();
+//    UsableItemList.clear();
+//    RegularItemList.clear();
+//    ExtractableItemList.clear();
 }
 /**************************
  *This member function gets the rows and columns of the game board from the user. After getting this information,
@@ -152,6 +166,10 @@ void Game::Initialize(){
             space1[i][j]= new Fog;
         }
     }
+    
+    delete space1[playerRow][playerCol];
+    space1[playerRow][playerCol] = nullptr;
+    
     space1[playerRow][playerCol] = new Debris;
     Game::setBoard();
 }
@@ -224,13 +242,22 @@ bool Game::MainMenu(){
     
     rounds++;
     playerMorale--;
-    
+    if(foundWarp == true && commLineActive == true){
+        int chanceForWin = generator.intGen(1,20);
+        if(chanceForWin >= 16){
+            winByWarp = true;
+        }
+    }
     if(playerMorale <=0){ // end game criteria
         Game::EndGame();
         deathByCrew = true;
         conclusion = true;
     }
     if(deathByShield == true){
+        Game::EndGame();
+        conclusion = true;
+    }
+    if(deathByDematerialization == true){
         Game::EndGame();
         conclusion = true;
     }
@@ -288,7 +315,7 @@ void Game::movePlayer(){
         cout << "5. Don't Move" << endl;
         cout << "6. Show Key" << endl;
         cout << "7. Show Stats" << endl;
-        cout << "8. View Found Ship Parts" << endl;
+        cout << "8. View Unrepaired Ship Parts" << endl;
         cout << "9. View Inventory" << endl;
         cout << "10. Show Charter Territory" << endl;
         int choice = Game::intValidation(1,10);
@@ -386,6 +413,8 @@ bool Game::tryMove(int choice){
  *Called by Game function in order to see if it's possible to place a new type of space onto FOG.
  **************************/
 void Game::placeSpace(int pRow, int pCol, int randSpace){
+    delete space1[pRow][pCol];//deleting fog
+    space1[pRow][pCol] = nullptr;
     
     if(randSpace <= stationCount && stationCount != 0){
         space1[pRow][pCol] = new Station;
@@ -726,14 +755,75 @@ void Game::staffDayOff(){
  Called by Game function to repair ship
  **************************/
 void Game::repairShip(){
-    
+    bool returnBack = false;
+    while (returnBack == false){
+        cout << "Gold Bars:" << goldBars << endl;
+        for(int i = 1; i <= KeyItemList.size(); i++){
+                cout << i << ". " << KeyItemList.at(i-1)->getName() << "\t" << KeyItemList.at(i-1)->getRepairCost() << " gold" << endl;
+            }
+        cout << KeyItemList.size()+1 << ". Go back" << endl;
+        int choice = intValidation(1, KeyItemList.size()+1);
+        if(choice != KeyItemList.size()+1){
+            if(goldBars < KeyItemList.at(choice-1)->getRepairCost()){
+                cout << "We can't repair this. It costs too much. Let's come back after we have the funds." << endl << endl;
+            }
+            else{
+                goldBars -= KeyItemList.at(choice-1)->getRepairCost();
+                if(KeyItemList.at(choice-1)->getType() == "Phaser"){
+                    cout << "(Oh man, just like when we got her. This puppy should be a real threat now.)" << endl << endl;
+                    phaserArmed = true;
+                    playerAttack += 10;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+                }
+                else if(KeyItemList.at(choice-1)->getType() == "Photon"){
+                    cout << "(Not this biggest fan of torepedos. But boy is this thing powerful.)" << endl << endl;
+                    photonReady = true;
+                    playerAttack += 10;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+
+                }
+                else if(KeyItemList.at(choice-1)->getType() == "Matter"){
+                    cout << "(We might be able to safely pass a Nebula with this thing equipped)" << endl << endl;
+                    matterStabilized = true;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+
+                }
+                else if(KeyItemList.at(choice-1)->getType() == "Shield"){
+                    cout << "(So safe. So reliable.)" << endl << endl;
+                    shieldRefined = true;
+                    playerShields += 15;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+
+                }
+                else if(KeyItemList.at(choice-1)->getType() == "Comm"){
+                    cout << "(Now we can finally broadcast a general distress signal with our ship's frequency patters.)" << endl << endl;
+                    commLineActive = true;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+
+                }
+                else if(KeyItemList.at(choice-1)->getType() == "Radar"){
+                    cout << "(Nothing's gonna get past us now.)" << endl << endl;
+                    radarActive = true;
+                    KeyItemList.erase(KeyItemList.begin() + choice - 1 );
+
+                }
+                cout << endl;
+            }
+
+        }
+        else{
+            returnBack =  true;
+        }
+    }
+
 }
+
 /**************************
  Called by Game function to trade with
  **************************/
 void Game::tradeItem(){
-    float multiplier;
-    multiplier = generator.floatGen(.8,1.2);//multiplies by cost for buyable items
+//    float multiplier;
+//    multiplier = generator.floatGen(.8,1.2);//multiplies by cost for buyable items
     bool returnToMain = true;
     bool returnToItems = true;
     while(returnToMain == true){
@@ -741,6 +831,7 @@ void Game::tradeItem(){
         cout << "2. Sell" << endl;
         cout << "3. Go back" << endl;
         int choice = Game::intValidation(1,3);
+        returnToItems = true;
         if (choice == 1 || choice == 2){
             while(returnToItems == true){
                 cout << "Gold Bars: " << goldBars << endl;
@@ -768,7 +859,7 @@ void Game::tradeItem(){
                     else{
                         returnToItems = false;
                     }
-                    
+                    cout << endl;
                 }
                    
                 if(choice == 2){
@@ -778,18 +869,21 @@ void Game::tradeItem(){
                     if(itemChoice != currentItems+1){
                         if(itemChoice  <= UsableItemList.size()){//selling a usable item
                             goldBars += UsableItemList.at(itemChoice-1)->getSellPrice();
+                            delete UsableItemList.at(itemChoice-1);
                             UsableItemList.erase(UsableItemList.begin() + (itemChoice-1));
                             currentItems--;
                         }
                         else if(itemChoice > UsableItemList.size() && itemChoice <= UsableItemList.size()+RegularItemList.size()){
                             int j = itemChoice - UsableItemList.size()-1;
+                            delete RegularItemList.at(j);
                             goldBars += RegularItemList.at(j)->getSellPrice();
                             RegularItemList.erase(RegularItemList.begin() + j);
                             currentItems--;
                         }
                        else{
                            int j = itemChoice - UsableItemList.size() - RegularItemList.size() - 1;
-                           goldBars +=  ExtractableItemList.at(j)->getSellPrice;
+                           delete ExtractableItemList.at(j);
+                           goldBars +=  ExtractableItemList.at(j)->getSellPrice();
                            ExtractableItemList.erase(ExtractableItemList.begin() + j);
                            currentItems--;
                        }
@@ -797,6 +891,7 @@ void Game::tradeItem(){
                     else{
                         returnToItems = false;
                     }
+                    cout << endl;
                 }
             }
 
@@ -804,6 +899,7 @@ void Game::tradeItem(){
         else{
             returnToMain = false;
         }
+        cout << endl;
     }
 
     
@@ -837,7 +933,7 @@ void Game::grabItem(){
     int randNumb2;
     int randNumb3;
     randNumb = generator.intGen(1, 10);
-    if (randNumb <= 7){//get a regular item
+    if (randNumb <= 5){//get a regular item
         randNumb2 = generator.intGen(1,10);
         if(randNumb2 <= 7){//get an extractable item
             if (currentItems < carryCapacity){
@@ -925,7 +1021,7 @@ void Game::grabItem(){
         }
         else{
             int randNumb4 = generator.intGen(1,10);
-            if (randNumb4 >= 9 && foundComm == true){
+            if (randNumb4 >= 9 && foundComm == true && foundWarp == false){
                 KeyItemList2.push_back(new Warp);
                  cout << "(Our Warp Drive! This might be our ticket out of here. Looks inoperable now. I'm not sure if the planets around here have an engineering bay that can handle this. I hope HQ is able to reach us soon.)" << endl;
                 foundWarp = true;
@@ -954,17 +1050,20 @@ void Game::useItem(){
             else{
                 if(UsableItemList.at(choice-1)->getType() == "Shield"){
                     playerShields += 5;
+                    delete UsableItemList.at(choice-1);
                     UsableItemList.erase(UsableItemList.begin() + (choice-1));
                     currentItems--;
                 }
                 else if(UsableItemList.at(choice-1)->getType() == "Morale"){
                     playerMorale += 10;
+                    delete UsableItemList.at(choice-1);
                     UsableItemList.erase(UsableItemList.begin() + (choice-1));
                     currentItems--;
 
                 }
                 else if(UsableItemList.at(choice-1)->getType() == "Strength"){
                     playerAttack += 5;
+                    delete UsableItemList.at(choice-1);
                     UsableItemList.erase(UsableItemList.begin() + (choice-1));
                     currentItems--;
 
@@ -1102,7 +1201,31 @@ void Game::viewDescriptions(){
  *The function shows the multiple endings that the player can experience depending on the bool variable that is active.
  **************************/
 void Game::EndGame(){
-    
+    string end1;
+    if(deathByShield == true){
+        end1 ="(Our Shields are completely down, and we've started to lose power from the storms. It wasn't long before Raiders finally got to us. I've sent this message down the hatch, if anyone is reading this, it's too late for us. We are still unsure of where we are, so don't bother coming for us.)\n\n";
+    }
+    if(deathByCrew == true){
+        end1 = "(The crew has completely lost hope. Myself included. We're a long ways from home, I'm sure. Hopefully someone will find us.)\n\n";
+    }
+    if(deathByDematerialization == true){
+        end1 = "(This is probably the last thing I'll ever write before having my atoms ripped apart. I'm in so much pain. If you are reading this, avoid the Nebula at all costs.)\n\n";
+    }
+    if(winByWarp == true){
+        end1 = "(Krrrr...)\nLieutenant: Captain, I'm getting a signal. It's really faint though.\n Captain ";
+        end1 += playerName;
+        end1 += ": Try to amplify the signal.\nLieutenant: Wait, this subspace frequency is one of our own! Our distress signal, they must have picked it up!\nCaptrain ";
+        end1 += playerName;
+        end1 += ": We're finally going home everyone.\n\n";
+    }
+    if (readTextSlow == true){
+        reader.readSlow(end1, 10);
+        
+    }
+    else{
+        cout << end1;
+    }
+//    Game::~Game();
 }
 /**************************
 *The function is a style choice to divide parts of the program with several dashes. 

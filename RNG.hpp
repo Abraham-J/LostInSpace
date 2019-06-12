@@ -14,7 +14,7 @@ private:
 
 public:
 	int intGen(int min, int max);
-    float floatGen(float min, float max);
+//    double floatGen(double min, double max);
 
 };
 

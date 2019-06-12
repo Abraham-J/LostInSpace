@@ -11,7 +11,8 @@ using std::string;
 
 Comm::Comm(){
     name = "Communication Device";
-    type = "Repairable";
+    type = "Comm";
+    repairStatus = "U";
     description = "Low frequency, communication device that alows subspace communication.";
     repairCost = 1500;
 }

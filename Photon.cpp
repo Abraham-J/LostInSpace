@@ -11,7 +11,8 @@ using std::string;
 
 Photon::Photon(){
     name = "Photon Torepedo";
-    type = "Weapon";
+    type = "Photon";
+    repairStatus = "U";
     description = "Warhead filled with antimatter that is launched using plasma exhaust. Can be attached to a ship's hull to increase it's attack power.";
     repairCost = 150;
 }

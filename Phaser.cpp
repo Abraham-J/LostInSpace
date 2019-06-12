@@ -11,7 +11,8 @@ using std::string;
 
 Phaser::Phaser(){
     name = "Phaser Rifles";
-    type = "Weapon";
+    type = "Phaser";
+    repairStatus = "U";
     description = "Phases through material, causing it to completely incinerate. Can be attached to a ship's hull to increase it's attack power.";
     repairCost = 150;
 }

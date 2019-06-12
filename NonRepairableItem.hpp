@@ -11,10 +11,8 @@
 
 class NonRepairableItem : public KeyItem{
     protected:
-        bool preReqMet;
     public:
     NonRepairableItem();
-    void setPreReq(bool);
 };
 
 #endif

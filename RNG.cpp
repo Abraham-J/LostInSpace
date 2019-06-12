@@ -7,8 +7,6 @@
 #include "RNG.hpp"
 using std::uniform_int_distribution;
 /******************************************************************************
-Passed:		int min, int max
-Returns:	int
 Description: This generates a random integer within the range passed into it.
 ******************************************************************************/
 int RNG::intGen(int min, int max)
@@ -17,13 +15,11 @@ int RNG::intGen(int min, int max)
 	return generator(engine);
 }
 
-/******************************************************************************
- Passed:        float min, float max
- Returns:    int
- Description: This generates a random integer within the range passed into it.
- ******************************************************************************/
-float RNG::floatGen(float min, float max)
-{
-    uniform_int_distribution<float> generator{ min, max };
-    return generator(engine);
-}
+///******************************************************************************
+// Description: This generates a random integer within the range passed into it.
+// ******************************************************************************/
+//double RNG::floatGen(double min, double max)
+//{
+//    uniform_int_distribution<double> generator{ min, max };
+//    return generator(engine);
+//}

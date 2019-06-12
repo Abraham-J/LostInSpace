@@ -11,7 +11,9 @@ using std::string;
 
 Radar::Radar(){
     name = "Multiangle Radar";
-    type = "Utility";
+    type = "Radar";
+    repairStatus = "U";
     description = "Can find cloaked ships, by tracking trace beams of energy.";
     repairCost = 250;
+
 }

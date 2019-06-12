@@ -10,11 +10,21 @@ using std::string;
 KeyItem::KeyItem(){
     
 }
+
+/********************************
+ Setter and getter functions for the items name, repair status, type and description.
+ ********************************/
 string KeyItem::getName(){
     return name;
 }
 string KeyItem::getType(){
     return type;
+}
+string KeyItem::getRepairStatus(){
+    return repairStatus;
+}
+void KeyItem::setRepairStatus(string m_type){
+    type = m_type;
 }
 string KeyItem::getDescription(){
     return description;

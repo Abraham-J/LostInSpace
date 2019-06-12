@@ -11,7 +11,8 @@ using std::string;
 
 Stabilizer::Stabilizer(){
     name = "Material Stabilizer";
-    type = "Repairable";
+    type = "Matter";
+    repairStatus = "U";
     description = "Prevents decay of matter into other dimensions by preventing supposition of the ship's particles. Allow's for safe passage through Nebulas.";
     repairCost = 400;
 }

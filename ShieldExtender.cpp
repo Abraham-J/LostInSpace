@@ -11,7 +11,8 @@ using std::string;
 
 ShieldExtender::ShieldExtender(){
     name = "Shield Extender";
-    type = "Repairable";
+    type = "Shield";
+    repairStatus = "U";
     description = "Employs an ion force field over parts of the ships, preventing items from causing damage to the ship's hull.";
     repairCost = 600;
 }
