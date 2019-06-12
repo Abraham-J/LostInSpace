@@ -16,6 +16,4 @@ Nebula::Nebula(){
     character = " : ";
     
 }
-void Nebula::DoActivity(int choice){
-    
-}
+

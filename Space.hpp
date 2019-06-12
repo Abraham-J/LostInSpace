@@ -27,7 +27,6 @@ protected://Variables available to all the derived classes
     
     
 public://Constructors, destructors and methods
-//    Space * head;
     Space();
     void setMap(Space *, Space *, Space *, Space *);
     std::string getType();
@@ -36,7 +35,6 @@ public://Constructors, destructors and methods
     Space * getDown();
     Space * getLeft();
     Space * getRight();
-    virtual void DoActivity(int);
     
     
 };

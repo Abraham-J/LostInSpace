@@ -16,6 +16,5 @@ private://Variables
     
 public://Constructors, destructors and methods
     Station();
-    void DoActivity(int) override;
 };
 #endif

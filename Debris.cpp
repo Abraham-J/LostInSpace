@@ -16,6 +16,4 @@ Debris::Debris(){
 	type = "Debris";
     character = "   ";
 }
-void Debris::DoActivity(int choice){
-    
-}
+

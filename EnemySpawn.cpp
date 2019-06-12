@@ -13,7 +13,7 @@ using std::string;
 
 EnemySpawn::EnemySpawn(){
     type = "EnemySpawn";
-    character = "   ";
+    character = " E ";
 }
 
 

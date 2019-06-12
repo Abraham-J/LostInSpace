@@ -16,6 +16,5 @@ private://Variables
     
 public://Constructors, destructors and methods
     Planet();
-    void DoActivity(int) override;
 };
 #endif

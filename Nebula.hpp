@@ -17,6 +17,5 @@ private://Variables
 public://Constructors, destructors and methods
     Nebula();
     
-    void DoActivity(int) override;
 };
 #endif

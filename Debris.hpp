@@ -17,6 +17,5 @@ private://Variables
     
 public://Constructors, destructors and methods
     Debris();
-    void DoActivity(int);
 };
 #endif

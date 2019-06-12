@@ -12,20 +12,32 @@ KeyItem::KeyItem(){
 }
 
 /********************************
- Setter and getter functions for the items name, repair status, type and description.
+getter function for name
  ********************************/
 string KeyItem::getName(){
     return name;
 }
+/********************************
+  getter function for type
+  ********************************/
 string KeyItem::getType(){
     return type;
 }
+/********************************
+ getter function for repair status
+ ********************************/
 string KeyItem::getRepairStatus(){
     return repairStatus;
 }
+/********************************
+ setter function for repair status
+ ********************************/
 void KeyItem::setRepairStatus(string m_type){
     type = m_type;
 }
+/********************************
+ getter function for description
+ ********************************/
 string KeyItem::getDescription(){
     return description;
 }

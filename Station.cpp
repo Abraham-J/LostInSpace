@@ -15,6 +15,4 @@ Station::Station(){
     type = "Station";
     character = " S ";
 }
-void Station::DoActivity(int choice){
-    
-}
+

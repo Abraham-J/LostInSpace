@@ -11,6 +11,9 @@ using std::string;
 ExtractableItem::ExtractableItem(){
 
 }
+/********************************
+Getter function for extraction cost
+ ********************************/
 int ExtractableItem::getExtractionCost(){
     return extractionCost;
 }

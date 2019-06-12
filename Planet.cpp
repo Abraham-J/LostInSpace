@@ -15,6 +15,4 @@ Planet::Planet(){
     type = "Planet";
     character = " O ";
 }
-void Planet::DoActivity(int choice){
-    
-}
+
