@@ -61,6 +61,7 @@ Game::Game(){
     playerDefense = 3;
     carryCapacity = 15;
     currentItems = 0;
+    goldBars = 0;
     
     planetCount = 3;
     nebulaCount = 1;
@@ -88,12 +89,23 @@ Game::Game(){
     
     deathByShield = false;
     deathByCrew = false;
+    deathByDematerialization = false;
     winByWarp = false;
+    
+    ShopList.push_back(new Deflector);
+    ShopList.push_back(new Party);
+    ShopList.push_back(new PowerOverloader);
 }
 Game::~Game(){//Free the allocated memory and reset the values of certain variables
     for (int i=0; i<row; i++)
         delete [] space1[i];
     delete [] space1;
+    KeyItemList.clear();
+    KeyItemList2.clear();
+    ShopList.clear();
+    UsableItemList.clear();
+    RegularItemList.clear();
+    ExtractableItemList.clear();
 }
 /**************************
  *This member function gets the rows and columns of the game board from the user. After getting this information,
@@ -284,20 +296,22 @@ void Game::movePlayer(){
         if (choice == 10){
             Game::showBoard();
         }
-        if (choice == 9){
+        else if (choice == 9){
             Game::viewDescriptions();
         }
-        if (choice == 8){
+        else if (choice == 8){
             Game::viewKeyDescriptions();
         }
-        if (choice == 7){
+        else if (choice == 7){
             Game::showStats();
         }
-        if (choice == 6){
+        else if (choice == 6){
             Game::showKey();
         }
-
-        else{
+        else if (choice == 5){//do nothing
+            
+        }
+        else{//move
             badChoice = Game::tryMove(choice);
         }
     }
@@ -365,9 +379,6 @@ bool Game::tryMove(int choice){
             return true;
         }
     }
-    if(choice == 5){
-        return true;
-    }
     return false;
 }
 
@@ -431,28 +442,6 @@ void Game::placeSpace(int pRow, int pCol, int randSpace){
         playerRow = pRow;
         playerCol = pCol;
         nebulaCount--;
-        if(matterStabilized == false){
-            string newNebula = "(Woah, I have a headahce. This area isn't stable to stay on for long. Maybe if we had a method for stabilizg out matter.)\n\n";
-            
-            if (readTextSlow == true){
-                reader.readSlow(newNebula, 10);
-            }
-            else{
-                cout << newNebula;
-            }
-
-        }
-        else{
-            string newNebula2 = "(Hmm, something seems off, but right now our ship seems fine. In fact we might be cloaked to any enemeies in the area.)\n\n";
-            
-            if (readTextSlow == true){
-                reader.readSlow(newNebula2, 10);
-            }
-            else{
-                cout << newNebula2;
-            }
-
-        }
     }
     
     else if ((randSpace <= (planetCount + stationCount + nebulaCount)) && (randSpace > stationCount + nebulaCount) && (planetCount!= 0) ){
@@ -631,7 +620,7 @@ void Game::doAction(){
         if (buffeted >=4){
             playerShields -=2;
             if(playerShields >= 5){
-                cout << "(We took a hit to our ships hull. Possibly from space junk. Someone should really clean that up. Our shields our holding)" << endl;
+                cout << "(We took a hit to our ships hull. Possibly from space junk. Someone should really clean that up. Our shields our holding, no worries.)" << endl;
             }
             else if (playerShields < 5 && playerShields >= 1){
                 cout << "(Okay, we're getting real close to major system failures. Another hit from that space junk and I dont know if our ship will be able to handle it.)" << endl;
@@ -642,13 +631,60 @@ void Game::doAction(){
         }
     }
     if(space1[playerRow][playerCol]->getType() == "Station"){
-        
+        cout << "1. Repair Ship" << endl;
+        cout << "2. Trade items" << endl;
+        cout << "3. Relieve staff for the day" << endl;
+        choice = Game::intValidation(1,3);
+        if (choice == 1){//repair
+            Game::repairShip();
+        }
+        else if (choice == 2){//trade
+            Game::tradeItem();
+        }
+        else{//day off
+            Game::staffDayOff();
+        }
     }
     if(space1[playerRow][playerCol]->getType() == "Nebula"){
-        
+        Game::NebulaAction();
     }
 }
-
+/**************************
+ Called by Game function to see if player loses shields in nebula
+ **************************/
+void Game::NebulaAction(){
+    if(matterStabilized == true){//able to stay in nebula
+        string newNebula2 = "(Hmm, something seems off about this area. We should study it some more when we have time, but right now our ship seems fine. In fact we might be cloaked to any enemeies in the area.)\n\n";
+        
+        if (readTextSlow == true){
+            reader.readSlow(newNebula2, 10);
+        }
+        else{
+            cout << newNebula2;
+        }
+    }
+    else{//lose shield when in nebula
+        playerShields -=5;
+        if(playerShields > 0){
+            string newNebula;
+            if (playerShields >= 5 ){
+                newNebula = "(Woah, I have a headahce. This area isn't stable to stay on for long. Maybe if we had a method for stabilizg out matter.)\n\n";
+            }
+            else if (playerShields <5){
+                newNebula = "(This isn't just a headache anymore. My body doesn't feel like it's part of this world. We need to leave now. There's no knowing what will happen if we stay.)\n\n";
+            }
+            if (readTextSlow == true){
+                reader.readSlow(newNebula, 10);
+            }
+            else{
+                cout << newNebula;
+            }
+        }
+        else{
+            deathByDematerialization = true;
+        }
+    }
+}
 /**************************
  Called by Game function to increase morale of the ship
  **************************/
@@ -662,13 +698,20 @@ void Game::staffDayOff(){
     }
     playerMorale += 2;
 }
-
+/**************************
+ Called by Game function to repair ship
+ **************************/
+void Game::repairShip(){
+    
+}
 /**************************
  Called by Game function to trade with
  **************************/
 void Game::tradeItem(){
     float multiplier;
     multiplier = generator.floatGen(.8,1.2);//multiplies by cost for buyable items
+    cout << "1. Buy" << endl;
+    cout << "2. Sell" << endl;
     
 }
 

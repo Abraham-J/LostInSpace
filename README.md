@@ -1,10 +1,10 @@
 This is a game where you start off stranded in the middle of a new quadrant of space. Several pieces of your ships equipment is broken and not functional. The only thing that is full functional is your thrusters. You are able to use this to move around and explore this new area. 
 
 You spawn in a 5x5 grid of abstract type space. Randomly placed are (1) space station, (3) planets, (1) Nebula, a spot that triggers the initiation of an enemy. All other spots are "debris". 
-    Space Station: Able to trade(you make less money at stations 10% less), release staff(increase morale +2), repair ship(with items you find and cash).
+    Space Station: Able to trade release staff(increase morale +2), repair ship (with items you find and cash).
     Planets: Able to talk to colony(and befriend them *Method unknown*), trade, release staff (increase morale +2)
     Debris: Able to search area or use item. If you choose to do nothing, then there is a chance to see an event(Events can be good or bad)
-    Nebula: Able to hide from enemies radar (decreases shields -1)
+    Nebula: Able to hide from enemies radar (decreases shields until stabliizer are active)
 
 Player Starting Stats:
     Shields: 30

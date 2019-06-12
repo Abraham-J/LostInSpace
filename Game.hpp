@@ -40,6 +40,7 @@ class Game{
     int playerAttack;
     int playerMorale;
     int playerDefense;
+    int goldBars;
     
     int carryCapacity;
     int currentItems;
@@ -55,6 +56,7 @@ class Game{
     std::vector<RepairableItem *> KeyItemList;
     std::vector<NonRepairableItem *> KeyItemList2;
     
+    std::vector<UsableItem *> ShopList;
     std::vector<UsableItem *> UsableItemList;//usable item inventory
     std::vector<RegularItem *> RegularItemList;//sellable item inventory
     std::vector<ExtractableItem *> ExtractableItemList; //extractable item inventory
@@ -87,6 +89,7 @@ class Game{
     
     bool deathByShield;
     bool deathByCrew;
+    bool deathByDematerialization;
     bool winByWarp;
   public:
     
@@ -109,11 +112,15 @@ class Game{
     
     void doAction();
     
+    void NebulaAction();
+    
     void staffDayOff();
     
     void talk();
     
     void tradeItem();
+    
+    void repairShip();
     
     void grabItem();
     
