@@ -8,6 +8,12 @@
 UsableItem::UsableItem(){
     
 }
+/*******************************
+returns the integer values of the usable items cost and boost value
+ ********************************/
 int UsableItem::getCost(){
     return baseCost;
+}
+int UsableItem::getBoost(){
+    return boostVal;
 }

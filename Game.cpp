@@ -61,12 +61,12 @@ Game::Game(){
     playerDefense = 3;
     carryCapacity = 15;
     currentItems = 0;
-    goldBars = 0;
+    goldBars = 10000;
     
     planetCount = 3;
     nebulaCount = 1;
     stationCount = 1;
-    
+    friendshipe  = 0;
     matterStabilized = false;
     phaserArmed = false;
     photonReady = false;
@@ -309,7 +309,7 @@ void Game::movePlayer(){
             Game::showKey();
         }
         else if (choice == 5){//do nothing
-            
+            badChoice = true;
         }
         else{//move
             badChoice = Game::tryMove(choice);
@@ -589,32 +589,49 @@ void Game::setBoard(){
  **************************/
 void Game::doAction(){
     int choice;
+    bool returnToChoice = true;
     if(space1[playerRow][playerCol]->getType() == "Planet"){
-        cout << "1. Talk to Colony" << endl;
-        cout << "2. Trade items" << endl;
-        cout << "3. Relieve staff for the day" << endl;
-        choice = Game::intValidation(1,3);
-        cout << endl;
-        if (choice == 1){
-            Game::talk();
+        while(returnToChoice == true){
+            cout << "1. Talk to Colony" << endl;
+            cout << "2. Trade items" << endl;
+            cout << "3. Relieve staff for the day" << endl;
+            cout << "4. Go back to ship" << endl;
+            choice = Game::intValidation(1,4);
+            cout << endl;
+            if (choice == 1){
+                Game::talk();
+                returnToChoice = false;
+            }
+            else if (choice == 2){
+                Game::tradeItem();
+            }
+            else if (choice == 3){
+                Game::staffDayOff();
+                returnToChoice = false;
+            }
+            else{
+                returnToChoice = false;
+            }
         }
-        else if (choice == 2){
-            Game::tradeItem();
-        }
-        else{
-            Game::staffDayOff();
-        }
+
     }
     if(space1[playerRow][playerCol]->getType() == "Debris"){
-        cout << "1. Scavange the area for parts" << endl;
-        cout << "2. Use item" <<endl;
-        choice = Game::intValidation(1,2);
-        cout << endl;
-        if (choice == 1){//scavange
-            Game::grabItem();
-        }
-        else{// use item
-            Game::useItem();
+        while(returnToChoice == true){
+            cout << "1. Scavange the area for parts" << endl;
+            cout << "2. Use item" <<endl;
+            cout << "3. Nothing this turn" << endl;
+            choice = Game::intValidation(1,3);
+            cout << endl;
+            if (choice == 1){//scavange
+                Game::grabItem();
+                returnToChoice = false;
+            }
+            else if (choice == 2){// use item
+                Game::useItem();
+            }
+            else{
+                returnToChoice = false;
+            }
         }
         int buffeted = generator.intGen(1,5);
         if (buffeted >=4){
@@ -631,18 +648,25 @@ void Game::doAction(){
         }
     }
     if(space1[playerRow][playerCol]->getType() == "Station"){
-        cout << "1. Repair Ship" << endl;
-        cout << "2. Trade items" << endl;
-        cout << "3. Relieve staff for the day" << endl;
-        choice = Game::intValidation(1,3);
-        if (choice == 1){//repair
-            Game::repairShip();
-        }
-        else if (choice == 2){//trade
-            Game::tradeItem();
-        }
-        else{//day off
-            Game::staffDayOff();
+        while(returnToChoice == true){
+            cout << "1. Repair Ship" << endl;
+            cout << "2. Trade items" << endl;
+            cout << "3. Relieve staff for the day" << endl;
+            cout << "4. Go back to ship" << endl;
+            choice = Game::intValidation(1,4);
+            if (choice == 1){//repair
+                Game::repairShip();
+            }
+            else if (choice == 2){//trade
+                Game::tradeItem();
+            }
+            else if (choice == 3){//day off
+                Game::staffDayOff();
+                returnToChoice = false;
+            }
+            else{
+                returnToChoice = false;
+            }
         }
     }
     if(space1[playerRow][playerCol]->getType() == "Nebula"){
@@ -710,8 +734,78 @@ void Game::repairShip(){
 void Game::tradeItem(){
     float multiplier;
     multiplier = generator.floatGen(.8,1.2);//multiplies by cost for buyable items
-    cout << "1. Buy" << endl;
-    cout << "2. Sell" << endl;
+    bool returnToMain = true;
+    bool returnToItems = true;
+    while(returnToMain == true){
+        cout << "1. Buy" << endl;
+        cout << "2. Sell" << endl;
+        cout << "3. Go back" << endl;
+        int choice = Game::intValidation(1,3);
+        if (choice == 1 || choice == 2){
+            while(returnToItems == true){
+                cout << "Gold Bars: " << goldBars << endl;
+                if(choice==1){
+                    for(int i = 1; i <= ShopList.size(); i++){
+                        cout << i << ". " << ShopList.at(i-1)->getName() << "\t" << ShopList.at(i-1)->getCost() << " gold" << endl;
+                    }
+                    cout << ShopList.size()+1 << ". Go back" << endl;
+                    int itemChoice = Game::intValidation(1,ShopList.size()+1);
+                    if(itemChoice != ShopList.size()+1){
+                        if (goldBars >= ShopList.at(itemChoice-1)->getCost()){//if you have money
+                            if(currentItems < carryCapacity){// if you have space
+                                goldBars -= ShopList.at(itemChoice-1)->getCost();
+                                UsableItemList.push_back(ShopList.at(itemChoice-1));
+                                currentItems++;
+                            }
+                            else{
+                                cout << "(Uhhh...I don't think we'd be able to carry anymore. Let's sell something first.)" << endl;
+                            }
+                        }
+                        else{
+                            cout << "Shop Keep: Stop messing around. If you don't have money. Leave already." << endl;
+                        }
+                    }
+                    else{
+                        returnToItems = false;
+                    }
+                    
+                }
+                   
+                if(choice == 2){
+                    Game::viewAllRInventory();
+                    cout << currentItems+1 << ". Go back" << endl;
+                    int itemChoice = Game::intValidation(1,currentItems+1);
+                    if(itemChoice != currentItems+1){
+                        if(itemChoice  <= UsableItemList.size()){//selling a usable item
+                            goldBars += UsableItemList.at(itemChoice-1)->getSellPrice();
+                            UsableItemList.erase(UsableItemList.begin() + (itemChoice-1));
+                            currentItems--;
+                        }
+                        else if(itemChoice > UsableItemList.size() && itemChoice <= UsableItemList.size()+RegularItemList.size()){
+                            int j = itemChoice - UsableItemList.size()-1;
+                            goldBars += RegularItemList.at(j)->getSellPrice();
+                            RegularItemList.erase(RegularItemList.begin() + j);
+                            currentItems--;
+                        }
+                       else{
+                           int j = itemChoice - UsableItemList.size() - RegularItemList.size() - 1;
+                           goldBars +=  ExtractableItemList.at(j)->getSellPrice;
+                           ExtractableItemList.erase(ExtractableItemList.begin() + j);
+                           currentItems--;
+                       }
+                    }
+                    else{
+                        returnToItems = false;
+                    }
+                }
+            }
+
+        }
+        else{
+            returnToMain = false;
+        }
+    }
+
     
 }
 
@@ -721,6 +815,17 @@ void Game::tradeItem(){
 void Game::talk(){
     int Outcome;
     Outcome = generator.intGen(1,10);//1-4 is good, 5-9 is neutral, 10 is bad
+    if (Outcome <= 4){
+        cout << "(Well that went well. We learned quite a bit about each other's culture.) " << endl;
+        friendship +=2;
+    }
+    else if (Outcome > 4 && Outcome <= 9){
+        cout << "(Well that could have gone better, at least we got a chance to stretch our legs.) " << endl;
+    }
+    else{
+        cout << "(Uh oh, I hope I didn't offend these guy's as badly as I thought I did.) " << endl;
+        friendship -=5;
+    }
     
 }
 
@@ -835,7 +940,42 @@ void Game::grabItem(){
  Called by Game function to use a found item while on debris
  **************************/
 void Game::useItem(){
-    
+    bool returnBack = false;
+    while(returnBack == false){
+        if(UsableItemList.size() != 0){
+            for(int i=1; i <= UsableItemList.size(); i++){//show usable items
+                cout << i << ". " << UsableItemList.at(i-1)->getName() << "\t(" << UsableItemList.at(i-1)->getType() << " +" << UsableItemList.at(i-1)->getBoost() << ")" << endl;
+            }
+            cout << UsableItemList.size()+1 << ". Go back" << endl;
+            int choice = Game::intValidation(1, UsableItemList.size()+1);
+            if (choice == UsableItemList.size()+1){
+                returnBack = true;
+            }
+            else{
+                if(UsableItemList.at(choice-1)->getType() == "Shield"){
+                    playerShields += 5;
+                    UsableItemList.erase(UsableItemList.begin() + (choice-1));
+                    currentItems--;
+                }
+                else if(UsableItemList.at(choice-1)->getType() == "Morale"){
+                    playerMorale += 10;
+                    UsableItemList.erase(UsableItemList.begin() + (choice-1));
+                    currentItems--;
+
+                }
+                else if(UsableItemList.at(choice-1)->getType() == "Strength"){
+                    playerAttack += 5;
+                    UsableItemList.erase(UsableItemList.begin() + (choice-1));
+                    currentItems--;
+
+                }
+            }
+        }
+        else{
+            cout << "(We have nothing to use at the moment.)" << endl;
+            returnBack = true;
+        }
+    }
 }
 /**************************
  Prints out what each part of the map means
@@ -888,10 +1028,10 @@ void Game::viewKeyInventory(){
 /**************************
  Prints out the other items that the player has gathered
  **************************/
-void Game::viewInventory(){
-    currentItems = UsableItemList.size() + RegularItemList.size() + ExtractableItemList.size();
+void Game::viewAllRInventory(){
+    currentItems = UsableItemList.size() + RegularItemList.size() + ExtractableItemList.size();//this should be updating, but just in case.
     for(int i=1; i <= UsableItemList.size(); i++){
-        cout << i << ". " << UsableItemList.at(i)->getName() << endl;
+        cout << i << ". " << UsableItemList.at(i-1)->getName() << endl;
     }
     int j = 0;
     for(int i = UsableItemList.size()+1; i<= RegularItemList.size()+ UsableItemList.size(); i++){
@@ -903,6 +1043,7 @@ void Game::viewInventory(){
         cout << i << ". " << ExtractableItemList.at(j)->getName() << endl;
     }
 }
+
 /**************************
  Prints out key item descriptions. Will keep prompting user to see if they want to view descrptions until they choose to go back
  **************************/
@@ -935,7 +1076,7 @@ void Game::viewDescriptions(){
     int j;
     bool showDescription = true;
     while (showDescription==true){
-        Game::viewInventory();
+        Game::viewAllRInventory();
         cout << currentItems+1 << ". Go back." << endl;
         int choice = Game::intValidation(1, currentItems+1);
         cout << endl;
@@ -958,7 +1099,7 @@ void Game::viewDescriptions(){
 
 }
 /**************************
- *The function is a style choice to divide parts of the program with several dashes.
+ *The function shows the multiple endings that the player can experience depending on the bool variable that is active.
  **************************/
 void Game::EndGame(){
     

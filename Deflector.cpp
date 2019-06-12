@@ -10,8 +10,9 @@ using std::string;
 
 Deflector::Deflector(){
     name = "Deflector Array";
-    type = "Bought";
+    type = "Shield";
     description = "Slows projectiles from approaching vital parts of ship. Can increase a ships shield capabilities";
     baseCost = 400;
     baseSellPrice = 400;
+    boostVal = 5;
 }

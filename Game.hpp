@@ -41,6 +41,7 @@ class Game{
     int playerMorale;
     int playerDefense;
     int goldBars;
+    int friendship;
     
     int carryCapacity;
     int currentItems;
@@ -134,7 +135,7 @@ class Game{
     
     void viewKeyInventory();
     
-    void viewInventory();
+    void viewAllRInventory();
     
     void viewDescriptions();
     

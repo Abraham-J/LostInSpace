@@ -21,7 +21,7 @@ class Item{
     std::string getName();
     std::string getType();
     std::string getDescription();
-    int getsellPrice();
+    int getSellPrice();
 };
 
 #endif

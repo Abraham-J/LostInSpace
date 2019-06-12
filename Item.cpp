@@ -17,6 +17,6 @@ std::string Item::getType(){
 std::string Item::getDescription(){
     return description;
 }
-int Item::getsellPrice(){
+int Item::getSellPrice(){
     return baseSellPrice;
 }

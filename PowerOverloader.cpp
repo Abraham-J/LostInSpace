@@ -10,8 +10,9 @@ using std::string;
 
 PowerOverloader::PowerOverloader(){
     name = "Power Overloader";
-    type = "Bought";
+    type = "Strength";
     description = "Provides a slight boost to a ships power power capacity.";
     baseCost = 300;
     baseSellPrice = 300;
+    boostVal = 5;
 }

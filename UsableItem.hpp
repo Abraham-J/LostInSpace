@@ -12,10 +12,12 @@
 class UsableItem : public Item{
     protected:
     int baseCost;
-
+    int boostVal;
+    
     public:
     UsableItem();
     int getCost();
+    int getBoost();
 };
 
 #endif

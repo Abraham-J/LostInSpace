@@ -10,8 +10,9 @@ using std::string;
 
 Party::Party(){
     name = "Party-in-a-box";
-    type = "Bought";
+    type = "Morale";
     description = "Allows crew to have some much needed time off.";
     baseCost = 100;
     baseSellPrice = 100;
+    boostVal = 10;
 }
