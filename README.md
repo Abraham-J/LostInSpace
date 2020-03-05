@@ -49,4 +49,4 @@ Turns:
             c)If enemy is near friendly planet, then will destroy it for you. 
     ****You play until shileds or morale <= 0 OR  if you find all the pieces***
         
-
+![alt text](images/screenshot.png)

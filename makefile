@@ -27,4 +27,4 @@ main.o: %.h main.cpp
 clean: 
 	rm *.o output
 zip: 
-	zip $(PROJ).zip *.cpp *.hpp makefile
+	zip $(PROJ).zip *.cpp *.hpp makefile SanjoAbrahamFinalReflection.pdf
